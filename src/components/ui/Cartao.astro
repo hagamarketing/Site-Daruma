@@ -1,0 +1,30 @@
+---
+/** Superfície base (sumi-800) com borda sutil. */
+interface Props {
+  as?: 'div' | 'article' | 'li' | 'section';
+  class?: string;
+  interativo?: boolean;
+}
+const { as: Tag = 'div', class: classe, interativo = false } = Astro.props;
+---
+
+<Tag class:list={['cartao', interativo && 'cartao--interativo', classe]}>
+  <slot />
+</Tag>
+
+<style>
+  .cartao {
+    position: relative;
+    border: 1px solid var(--color-sumi-700);
+    border-radius: var(--radius-cartao);
+    background: var(--color-sumi-800);
+    box-shadow: var(--shadow-cartao);
+  }
+  .cartao--interativo {
+    transition: border-color 0.3s var(--ease-saida);
+  }
+  .cartao--interativo:hover,
+  .cartao--interativo:focus-within {
+    border-color: var(--color-salmon-400);
+  }
+</style>

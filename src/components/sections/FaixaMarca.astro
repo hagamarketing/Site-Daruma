@@ -1,0 +1,117 @@
+---
+import Kanji from '@/components/ui/Kanji.astro';
+
+const ITENS = ['Temaki', 'Rolls', 'Sashimi', 'Hot Roll', 'Carpaccio'];
+---
+
+<section class="faixa" aria-label="O que servimos" data-faixa>
+  <Kanji palavra="sushi" class="faixa__kanji" />
+  <div class="faixa__trilho" data-letreiro>
+    <ul role="list" class="faixa__lista">
+      {ITENS.map((i) => <li>{i}</li>)}
+    </ul>
+    <ul role="list" class="faixa__lista" aria-hidden="true">
+      {ITENS.map((i) => <li>{i}</li>)}
+    </ul>
+  </div>
+  <button type="button" class="faixa__pausa" data-somente-js data-faixa-pausa aria-pressed="false">
+    <span class="sr-only">Pausar o letreiro</span>
+    <svg class="faixa__icone-pausa" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+    <svg class="faixa__icone-play" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3l8 5-8 5z" fill="currentColor"></path></svg>
+  </button>
+</section>
+
+<script>
+  for (const faixa of document.querySelectorAll<HTMLElement>('[data-faixa]')) {
+    const botao = faixa.querySelector<HTMLButtonElement>('[data-faixa-pausa]');
+    botao?.addEventListener('click', () => {
+      const pausado = faixa.toggleAttribute('data-pausado');
+      botao.setAttribute('aria-pressed', String(pausado));
+      const rotulo = botao.querySelector('.sr-only');
+      if (rotulo) rotulo.textContent = pausado ? 'Retomar o letreiro' : 'Pausar o letreiro';
+    });
+  }
+</script>
+
+<style>
+  .faixa {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    border-block: 1px solid var(--color-sumi-700);
+  }
+  .faixa :global(.faixa__kanji) {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    font-size: clamp(6rem, 4rem + 10vw, 14rem);
+    transform: translate(-50%, -50%);
+    opacity: 0.05;
+  }
+  .faixa__trilho {
+    position: relative;
+    display: flex;
+    width: max-content;
+  }
+  .faixa__lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 clamp(1.5rem, 1rem + 2vw, 3rem);
+    margin: 0;
+    padding: 0 clamp(1.5rem, 1rem + 2vw, 3rem) 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 1.8rem + 3.5vw, 5.5rem);
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .faixa__lista li {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.5rem, 1rem + 2vw, 3rem);
+  }
+  .faixa__lista li:nth-child(even) {
+    font-style: italic;
+    color: var(--color-salmon-400);
+  }
+  /* Letreiro infinito: só com JS (há botão de pausa) e sem movimento reduzido. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .faixa__trilho {
+      animation: var(--animate-letreiro);
+    }
+    .faixa:hover .faixa__trilho,
+    .faixa:focus-within .faixa__trilho,
+    .faixa[data-pausado] .faixa__trilho {
+      animation-play-state: paused;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faixa__pausa {
+      display: none;
+    }
+  }
+  .faixa__pausa {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.5rem;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--color-sumi-600);
+    border-radius: 50%;
+    background: var(--color-sumi-950);
+    color: var(--color-washi-50);
+    cursor: pointer;
+  }
+  .faixa__icone-play,
+  .faixa__pausa[aria-pressed='true'] .faixa__icone-pausa {
+    display: none;
+  }
+  .faixa__pausa[aria-pressed='true'] .faixa__icone-play {
+    display: block;
+  }
+  .faixa__lista li::after {
+    content: '·';
+    color: var(--color-daruma-400);
+    font-style: normal;
+  }
+</style>

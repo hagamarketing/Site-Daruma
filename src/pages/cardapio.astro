@@ -1,0 +1,254 @@
+---
+import MenuCard from '@/components/ui/MenuCard.astro';
+import Botao from '@/components/ui/Botao.astro';
+import TopoPagina from '@/components/ui/TopoPagina.astro';
+import { pratosPorCategoria, SELOS } from '@/data/cardapio';
+import { links, site } from '@/data/site';
+import Base from '@/layouts/Base.astro';
+
+const grupos = pratosPorCategoria();
+const total = grupos.reduce((n, g) => n + g.pratos.length, 0);
+
+const menuSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Menu',
+  name: `Cardápio do ${site.nome}`,
+  inLanguage: 'pt-BR',
+  url: `${site.url}/cardapio`,
+  hasMenuSection: grupos.map((g) => ({
+    '@type': 'MenuSection',
+    name: g.rotulo,
+    hasMenuItem: g.pratos.map((p) => ({
+      '@type': 'MenuItem',
+      name: p.nome,
+      description: p.descricao,
+      ...(p.selos.includes('vegetariano') && { suitableForDiet: 'https://schema.org/VegetarianDiet' }),
+      ...(typeof p.preco === 'number' && { offers: { '@type': 'Offer', price: p.preco.toFixed(2), priceCurrency: 'BRL' } }),
+    })),
+  })),
+};
+const migalhas = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Início', item: `${site.url}/` },
+    { '@type': 'ListItem', position: 2, name: 'Cardápio', item: `${site.url}/cardapio` },
+  ],
+};
+---
+
+<Base
+  titulo="Cardápio | Daruma Temaki e Rolls, Marília"
+  descricao="Cardápio à la carte do Daruma: temakis, rolls, hot rolls, sashimis, combinados, pratos quentes, bebidas e sobremesas, com preços."
+  jsonLd={[menuSchema, migalhas]}
+>
+  <TopoPagina rotulo="À la carte" pagina="Cardápio" kanji="temaki">
+    <Fragment slot="titulo">Cardápio: <em>escolha pelo nome</em></Fragment>
+    <p>Todos os pratos à la carte, com preço. Prefere comer de tudo um pouco? Veja o <a href="/#rodizio">rodízio</a>.</p>
+  </TopoPagina>
+  <div class="container-site cardapio" data-motion="cardapio revelar">
+    <nav class="categorias" aria-label="Categorias do cardápio" data-filtros>
+      <ul role="list">
+        <li class="categorias__todos" data-somente-js>
+          <button type="button" class="filtro" aria-pressed="true" data-filtro="todos">Todos</button>
+        </li>
+        {
+          grupos.map((g) => (
+            <li>
+              <a href={`#${g.categoria}`} class="filtro" data-filtro={g.categoria}>
+                {g.rotulo} <span class="filtro__qtd">{g.pratos.length}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="busca" data-somente-js>
+      <label for="busca-prato" class="sr-only">Buscar no cardápio</label>
+      <input
+        id="busca-prato"
+        type="search"
+        placeholder="Buscar: salmão, hot roll, picante…"
+        autocomplete="off"
+        data-busca-input
+      />
+      <div class="busca__selos" role="group" aria-label="Filtrar por selo">
+        {
+          Object.entries(SELOS).map(([valor, s]) => (
+            <button type="button" class="filtro filtro--selo" aria-pressed="false" data-selo={valor}>
+              {s.rotulo}
+            </button>
+          ))
+        }
+      </div>
+      <p class="busca__status" role="status" aria-live="polite" data-busca-status>{total} pratos</p>
+    </div>
+
+    {
+      grupos.map((g) => (
+        <section id={g.categoria} class="grupo" aria-labelledby={`t-${g.categoria}`} data-grupo={g.categoria}>
+          <h2 id={`t-${g.categoria}`} class="text-subtitulo grupo__titulo">{g.rotulo}</h2>
+          <ul role="list" class="grupo__grade">
+            {g.pratos.map((p) => (
+              <li data-item>
+                <MenuCard prato={p} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+
+    <p class="vazio" hidden data-vazio>Nenhum prato encontrado. Tente outra palavra.</p>
+
+    <aside class="pedir" aria-label="Pedir">
+      <p>Bateu fome agora?</p>
+      <div>
+        <Botao href="/#delivery">Pedir delivery</Botao>
+        <Botao href={links.ifood} variante="secundario" evento="delivery_ifood">Pedir no iFood</Botao>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    import '@/scripts/cardapio';
+  </script>
+</Base>
+
+<style>
+  .cardapio {
+    padding-bottom: 4rem;
+  }
+  .categorias {
+    position: sticky;
+    top: 5.5rem;
+    z-index: 5;
+    margin-inline: calc(-1 * clamp(1rem, 0.5rem + 2.5vw, 3rem));
+    padding: 0.75rem clamp(1rem, 0.5rem + 2.5vw, 3rem);
+    background: oklch(16% 0.003 67.6 / 0.92);
+    backdrop-filter: blur(10px);
+  }
+  .categorias ul {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .categorias li[hidden] {
+    display: none;
+  }
+  .filtro {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.5rem;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--color-sumi-600);
+    border-radius: var(--radius-pilula);
+    background: transparent;
+    color: var(--color-washi-50);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .filtro:hover {
+    border-color: var(--color-salmon-400);
+  }
+  .filtro[aria-pressed='true'],
+  .filtro[aria-current='true'] {
+    border-color: var(--color-daruma-600);
+    background: var(--color-daruma-600);
+  }
+  .filtro__qtd {
+    font-size: 0.75rem;
+    color: var(--color-washi-300);
+  }
+  .filtro[aria-pressed='true'] .filtro__qtd,
+  .filtro[aria-current='true'] .filtro__qtd {
+    color: var(--color-washi-50);
+  }
+  .busca {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .busca[hidden] {
+    display: none;
+  }
+  .busca input {
+    width: 100%;
+    max-width: 32rem;
+    min-height: 3rem;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--color-sumi-600);
+    border-radius: var(--radius-pilula);
+    background: var(--color-sumi-900);
+    color: var(--color-washi-50);
+    font: inherit;
+  }
+  .busca__selos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .busca__status {
+    font-size: 0.875rem;
+    color: var(--color-washi-300);
+  }
+  .grupo {
+    padding-top: 3rem;
+    scroll-margin-top: 9rem;
+  }
+  .grupo[hidden] {
+    display: none;
+  }
+  .grupo__titulo {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-sumi-700);
+  }
+  .grupo__grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: clamp(1rem, 0.5rem + 1.5vw, 1.75rem);
+    margin: 0;
+    padding: 0;
+  }
+  .grupo__grade > li {
+    display: grid;
+  }
+  .grupo__grade > li[hidden] {
+    display: none;
+  }
+  .vazio {
+    padding: 3rem 0;
+    color: var(--color-washi-300);
+  }
+  .pedir {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 4rem;
+    padding: 1.5rem 2rem;
+    border: 1px solid var(--color-sumi-700);
+    border-radius: var(--radius-cartao);
+    background: var(--color-sumi-900);
+  }
+  .pedir p {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+  }
+  .pedir div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+</style>

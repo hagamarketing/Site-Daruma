@@ -1,0 +1,93 @@
+---
+/**
+ * Selo de status (aberto/fechado) ao vivo, no fuso da casa.
+ * Sem JavaScript, mostra um resumo dos horários; com JS, o status real (src/scripts/status.ts).
+ */
+import { horarios } from '@/data/horarios';
+import { agruparSemana, type EstadoSelo, formatarTurno, NOME_DIA } from '@/scripts/horarios';
+
+interface Props {
+  /** Fixa o estado (só para o /styleguide). Sem isso, o selo é ao vivo. */
+  estado?: EstadoSelo;
+  texto?: string;
+  class?: string;
+}
+const { estado, texto, class: classe } = Astro.props;
+const aoVivo = estado === undefined;
+
+function resumo(): string {
+  const linhas = agruparSemana(horarios.semana);
+  const principal = linhas.filter((l) => l.turnos.length).sort((a, b) => b.dias.length - a.dias.length)[0];
+  const fechados = linhas.find((l) => l.turnos.length === 0);
+  const turno = principal?.turnos[0];
+  const partes = [turno ? `${turno.nome} ${formatarTurno(turno)}` : 'Veja os horários'];
+  if (fechados) partes.push(`fechado: ${fechados.dias.map((d) => NOME_DIA[d].longo).join(', ')}`);
+  return partes.join(' · ');
+}
+
+const estadoInicial: EstadoSelo = estado ?? 'fechado';
+const textoInicial =
+  texto ??
+  (aoVivo
+    ? resumo()
+    : { aberto: 'Aberto agora', fechado: 'Fechado agora', 'em-breve': 'Abre em breve' }[estadoInicial]);
+---
+
+<p
+  class:list={['status', `status--${estadoInicial}`, aoVivo && 'status--resumo', classe]}
+  data-status-ao-vivo={aoVivo ? '' : undefined}
+  data-horarios={aoVivo ? JSON.stringify(horarios) : undefined}
+>
+  <span class="status__ponto" aria-hidden="true"></span>
+  <span class="status__texto">{textoInicial}</span>
+</p>
+
+{aoVivo && <script>import '@/scripts/status';</script>}
+
+<style>
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0.4rem 0.9rem 0.4rem 0.75rem;
+    border: 1px solid var(--color-sumi-600);
+    border-radius: var(--radius-pilula);
+    background: oklch(22.9% 0.006 56.1 / 0.7);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-washi-50);
+  }
+  .status__ponto {
+    position: relative;
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--cor-status);
+  }
+  .status__ponto::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--cor-status);
+  }
+  .status--aberto {
+    --cor-status: var(--color-sucesso-400);
+  }
+  .status--aberto .status__ponto::after,
+  .status--em-breve .status__ponto::after {
+    animation: var(--animate-pulso);
+  }
+  .status--fechado {
+    --cor-status: var(--color-daruma-400);
+  }
+  .status--em-breve {
+    --cor-status: var(--color-gold-400);
+  }
+  /* Sem JS: resumo neutro (ainda não sabemos o dia de quem visita). */
+  .status--resumo:not([data-estado]) {
+    --cor-status: var(--color-gold-400);
+  }
+</style>

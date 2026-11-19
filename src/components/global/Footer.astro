@@ -1,0 +1,231 @@
+---
+import { horarios } from '@/data/horarios';
+import { agruparSemana, formatarTurno } from '@/scripts/horarios';
+import { comUtm, linkWhatsApp, links, mensagens, navegacao, site } from '@/data/site';
+import Logo from '@/components/ui/Logo.astro';
+import Icone from '@/components/ui/Icone.astro';
+import Kanji from '@/components/ui/Kanji.astro';
+
+const { endereco } = site;
+const semana = agruparSemana(horarios.semana);
+const ano = new Date().getFullYear();
+const ifood = comUtm(links.ifood, 'rodape', 'delivery');
+const whatsDelivery = linkWhatsApp(mensagens.delivery);
+---
+
+<footer class="rodape" id="rodape" data-rodape>
+  <Kanji palavra="daruma" class="rodape__kanji" />
+  <div class="container-site rodape__grade">
+    <div class="rodape__marca">
+      <Logo />
+      <p class="rodape__frase">Temaki, rolls e rodízio japonês no Jardim Maria Izabel. Noite em Marília, alma de Tóquio.</p>
+    </div>
+
+    <div>
+      <h2 class="rotulo">Endereço</h2>
+      <address class="rodape__nap">
+        <strong>{site.nome}</strong><br />
+        {endereco.rua}<br />
+        {endereco.bairro}, {endereco.cidade} – {endereco.uf}<br />
+        CEP {endereco.cep}<br />
+        <a href={links.telefone} data-evento="ligacao">{site.telefone.exibicao}</a><br />
+        <a href={linkWhatsApp(mensagens.reserva)} data-evento="reserva_whatsapp" target="_blank" rel="noopener">
+          WhatsApp {site.whatsapp.exibicao}<span class="sr-only"> (abre em nova aba)</span>
+        </a>
+      </address>
+      <p class="rodape__rota">
+        <a href={links.googleMaps} data-evento="rota" target="_blank" rel="noopener">
+          <Icone nome="pino" tamanho={16} /> Como chegar<span class="sr-only"> (Google Maps, abre em nova aba)</span>
+        </a>
+      </p>
+    </div>
+
+    <div>
+      <h2 class="rotulo">Horários</h2>
+      <dl class="rodape__horarios">
+        {
+          semana.map((linha) => (
+            <div>
+              <dt>{linha.rotulo}</dt>
+              <dd>
+                {linha.turnos.length === 0
+                  ? 'Fechado'
+                  : linha.turnos.map((t) => `${t.nome.toLowerCase()} ${formatarTurno(t)}`).join(' · ')}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <div class="rodape__colunas">
+      <nav aria-label="Rodapé">
+        <h2 class="rotulo">Navegue</h2>
+        <ul role="list">
+          {navegacao.map((i) => <li><a href={i.href}>{i.rotulo}</a></li>)}
+          <li><a href="/#reservas">Reservas</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2 class="rotulo">Peça</h2>
+        <ul role="list">
+          <li>
+            <a href={whatsDelivery} data-evento="delivery_whatsapp" target="_blank" rel="noopener">
+              Delivery pelo WhatsApp<span class="sr-only"> (abre em nova aba)</span>
+            </a>
+          </li>
+          <li>
+            <a href={ifood} data-evento="delivery_ifood" target="_blank" rel="noopener">
+              Pedir no iFood<span class="sr-only"> (abre em nova aba)</span>
+            </a>
+          </li>
+        </ul>
+        <h2 class="rotulo rodape__redes-titulo">Redes</h2>
+        <ul role="list">
+          <li>
+            <a href={links.instagram} target="_blank" rel="noopener">Instagram<span class="sr-only"> (abre em nova aba)</span></a>
+          </li>
+          <li>
+            <a href={links.facebook} target="_blank" rel="noopener">Facebook<span class="sr-only"> (abre em nova aba)</span></a>
+          </li>
+          <li>
+            <a href={links.avaliarGoogle} data-evento="avaliar_google" target="_blank" rel="noopener">
+              Avaliar no Google<span class="sr-only"> (abre em nova aba)</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-site rodape__base">
+    <p>© {ano} {site.nome}</p>
+    <p>
+      <a href="/privacidade">Privacidade e cookies</a>
+      <span data-somente-js>
+        ·
+        <button type="button" class="rodape__cookies" data-abrir-cookies>Preferências de cookies</button>
+      </span>
+    </p>
+    <p>Desenvolvido por Haga Marketing</p>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    position: relative;
+    overflow: clip;
+    margin-top: 6rem;
+    padding: 5rem 0 calc(2rem + var(--altura-barra-mobile, 0px));
+    border-top: 1px solid var(--color-sumi-700);
+    background: var(--color-sumi-900);
+    font-size: 0.9375rem;
+    color: var(--color-washi-300);
+  }
+  .rodape :global(.rodape__kanji) {
+    position: absolute;
+    right: -2rem;
+    bottom: -4rem;
+    opacity: 0.035;
+  }
+  .rodape__grade {
+    position: relative;
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 48rem) {
+    .rodape__grade {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 80rem) {
+    .rodape__grade {
+      grid-template-columns: 1.2fr 1fr 1fr 1.3fr;
+    }
+  }
+  .rodape__frase {
+    max-width: 28ch;
+    margin-top: 1.25rem;
+  }
+  .rodape h2 {
+    margin: 0 0 1rem;
+  }
+  .rodape__nap {
+    font-style: normal;
+    line-height: 1.8;
+  }
+  .rodape__nap strong {
+    color: var(--color-washi-50);
+    font-weight: 600;
+  }
+  .rodape a {
+    color: var(--color-washi-50);
+    text-decoration-color: var(--color-sumi-600);
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.2s, color 0.2s;
+  }
+  .rodape a:hover {
+    color: var(--color-salmon-400);
+    text-decoration-color: currentColor;
+  }
+  .rodape__rota a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
+  .rodape__horarios {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+  }
+  .rodape__horarios dt {
+    color: var(--color-washi-50);
+    font-weight: 600;
+  }
+  .rodape__horarios dd {
+    margin: 0;
+  }
+  .rodape__colunas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .rodape ul {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+  }
+  .rodape__redes-titulo {
+    margin-top: 2rem !important;
+  }
+  .rodape__base {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    justify-content: space-between;
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-sumi-700);
+    font-size: 0.8125rem;
+  }
+  .rodape__base p {
+    margin: 0;
+  }
+  .rodape__cookies {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-washi-50);
+    font: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--color-sumi-600);
+    text-underline-offset: 4px;
+    cursor: pointer;
+  }
+  .rodape__cookies:hover {
+    color: var(--color-salmon-400);
+  }
+</style>

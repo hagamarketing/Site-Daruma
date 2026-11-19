@@ -1,0 +1,82 @@
+---
+/**
+ * <title>, meta tags, Open Graph e dados estruturados (JSON-LD).
+ * O JSON-LD Restaurant entra em todas as páginas; os horários vêm de src/data/horarios.ts.
+ */
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import ogPadrao from '@/assets/fotos/og-padrao.jpg';
+import { horarios } from '@/data/horarios';
+import { site } from '@/data/site';
+import { paraOpeningHours } from '@/scripts/horarios';
+
+interface Props {
+  titulo: string;
+  descricao: string;
+  imagem?: ImageMetadata | undefined;
+  imagemAlt?: string | undefined;
+  noindex?: boolean | undefined;
+  /** Dados estruturados extras da página (FAQ, cardápio, migalhas). */
+  jsonLd?: unknown[] | undefined;
+}
+
+const { titulo, descricao, imagem = ogPadrao, imagemAlt, noindex = false, jsonLd = [] } = Astro.props;
+const url = (caminho: string) => new URL(caminho, site.url).href;
+const caminho = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '').replace(/\/$/, '') || '/';
+const canonica = url(caminho);
+const og = await getImage({ src: imagem, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 80 });
+const ogUrl = url(og.src);
+const ogAlt = imagemAlt ?? `${site.nome}: restaurante japonês em Marília`;
+
+const restaurante = {
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  '@id': `${site.url}/#restaurante`,
+  name: site.nome,
+  url: site.url,
+  image: ogUrl,
+  telephone: site.telefone.e164,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.endereco.rua,
+    addressLocality: site.endereco.cidade,
+    addressRegion: site.endereco.uf,
+    postalCode: site.endereco.cep,
+    addressCountry: 'BR',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: site.geo.latitude, longitude: site.geo.longitude },
+  servesCuisine: 'Japanese',
+  priceRange: site.faixaPreco,
+  acceptsReservations: true,
+  hasMenu: url('/cardapio'),
+  openingHoursSpecification: paraOpeningHours(horarios, new Date().toISOString().slice(0, 10)),
+  sameAs: [site.links.instagram, site.links.facebook],
+};
+const json = (d: unknown) => JSON.stringify(d).replace(/</g, '\\u003c');
+---
+
+<title>{titulo}</title>
+<meta name="description" content={descricao} />
+<link rel="canonical" href={canonica} />
+<meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
+
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="pt_BR" />
+<meta property="og:site_name" content={site.nome} />
+<meta property="og:title" content={titulo} />
+<meta property="og:description" content={descricao} />
+<meta property="og:url" content={canonica} />
+<meta property="og:image" content={ogUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={ogAlt} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={titulo} />
+<meta name="twitter:description" content={descricao} />
+<meta name="twitter:image" content={ogUrl} />
+<meta name="twitter:image:alt" content={ogAlt} />
+
+<meta name="geo.region" content={`BR-${site.endereco.uf}`} />
+<meta name="geo.placename" content={site.endereco.cidade} />
+
+{[restaurante, ...jsonLd].map((d) => <script type="application/ld+json" set:html={json(d)} />)}

@@ -1,0 +1,169 @@
+---
+import Foto from '@/components/ui/Foto.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import Botao from '@/components/ui/Botao.astro';
+import Kanji from '@/components/ui/Kanji.astro';
+import RodizioPrecos from '@/components/sections/RodizioPrecos.astro';
+import { etapas } from '@/data/rodizio';
+
+const lista = etapas;
+const total = String(lista.length).padStart(2, '0');
+---
+
+<section id="rodizio" class="rodizio" aria-labelledby="rodizio-titulo" data-rodizio data-motion="rodizio">
+  <Kanji palavra="rodizio" vertical class="rodizio__kanji" />
+  <div class="container-site rodizio__cabeca">
+    <SecaoTitulo id="rodizio-titulo" rotulo="Rodízio japonês">
+      Cinco etapas, <em>no seu ritmo</em>
+      <p slot="intro">Você pede, a cozinha prepara e a mesa vai se enchendo. Da entrada à sobremesa.</p>
+    </SecaoTitulo>
+    <p class="rodizio__contador" aria-hidden="true" data-contador>
+      <span data-contador-atual>01</span><span class="rodizio__contador-total">/ {total}</span>
+    </p>
+  </div>
+
+  <div class="rodizio__janela" data-rodizio-janela tabindex="0" role="region" aria-label="Etapas do rodízio (role para os lados)">
+    <ol role="list" class="rodizio__trilho" data-rodizio-trilho>
+      {
+        lista.map((etapa, i) => (
+          <li class="etapa" data-etapa>
+            <div class="etapa__foto">
+              <Foto src={etapa.foto} alt={etapa.alt} sizes="(min-width: 64rem) 30vw, 80vw" larguras={[400, 640, 900]} />
+            </div>
+            <div class="etapa__texto">
+              <p class="etapa__numero" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+              <h3 class="text-subtitulo">{etapa.nome}</h3>
+              <p>{etapa.descricao}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <div class="container-site rodizio__rodape">
+    <Botao href="#precos" variante="secundario">Ver modalidades e preços</Botao>
+  </div>
+</section>
+
+<RodizioPrecos />
+
+<style>
+  .rodizio {
+    position: relative;
+    overflow: clip;
+    padding-block: clamp(5rem, 4rem + 5vw, 9rem);
+  }
+  .rodizio :global(.rodizio__kanji) {
+    position: absolute;
+    top: 2rem;
+    left: -1rem;
+    font-size: clamp(5rem, 3rem + 8vw, 12rem);
+  }
+  .rodizio__cabeca {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .rodizio__contador {
+    margin-bottom: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 2rem + 4vw, 6rem);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .rodizio__contador-total {
+    margin-left: 0.3em;
+    font-size: 0.4em;
+    color: var(--color-washi-300);
+  }
+  /* Sem JS: rolagem horizontal nativa com snap. Com JS, a etapa de animação fixa a seção. */
+  .rodizio__janela {
+    position: relative;
+    scroll-padding-inline: var(--recuo-container);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    padding-bottom: 1rem;
+  }
+  .rodizio__trilho {
+    display: flex;
+    gap: clamp(1rem, 0.5rem + 2vw, 2rem);
+    width: max-content;
+    margin: 0;
+    padding: 0 var(--recuo-container);
+  }
+  .etapa {
+    display: grid;
+    gap: 1.25rem;
+    width: min(80vw, 26rem);
+    scroll-snap-align: start;
+  }
+  .etapa__foto {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: var(--radius-cartao);
+    background: var(--color-sumi-800);
+  }
+  .etapa__foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .etapa__numero {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--color-gold-400);
+  }
+  .etapa__texto h3 {
+    margin-top: 0.25rem;
+  }
+  .etapa__texto p:last-child {
+    margin-top: 0.5rem;
+    color: var(--color-washi-300);
+  }
+  /* Modo fixo (JS): a rolagem vertical move o trilho; nada de rolagem nativa. */
+  .rodizio:global(.rodizio--fixo) .rodizio__janela {
+    overflow: hidden;
+    padding-bottom: 0;
+  }
+  .rodizio:global(.rodizio--fixo) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100svh;
+    padding-block: 6rem 3rem;
+  }
+  .rodizio:global(.rodizio--fixo) .etapa {
+    width: min(34vw, 24rem);
+  }
+  .rodizio:global(.rodizio--fixo) .etapa__foto {
+    aspect-ratio: 4 / 4.2;
+    max-height: 52svh;
+  }
+  /* Movimento reduzido: lista vertical. */
+  @media (prefers-reduced-motion: reduce) {
+    .rodizio__janela {
+      overflow: visible;
+    }
+    .rodizio__trilho {
+      flex-direction: column;
+      width: auto;
+    }
+    .etapa {
+      grid-template-columns: minmax(8rem, 14rem) 1fr;
+      align-items: center;
+      width: auto;
+    }
+    .rodizio__contador {
+      display: none;
+    }
+  }
+  .rodizio__rodape {
+    margin-top: 2.5rem;
+  }
+</style>

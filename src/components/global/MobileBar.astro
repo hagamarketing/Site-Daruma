@@ -1,0 +1,94 @@
+---
+import { links } from '@/data/site';
+import Icone from '@/components/ui/Icone.astro';
+import OlhoDaruma from '@/components/ui/OlhoDaruma.astro';
+---
+
+<nav class="barra-mobile vidro" aria-label="Ações rápidas" data-barra-mobile>
+  <a href="/#reservas" class="barra-mobile__item barra-mobile__item--principal">
+    <OlhoDaruma />
+    <span>Reservar</span>
+  </a>
+  <a href="/#delivery" class="barra-mobile__item">
+    <Icone nome="sacola" />
+    <span>Delivery</span>
+  </a>
+  <a href={links.googleMaps} class="barra-mobile__item" data-evento="rota" target="_blank" rel="noopener">
+    <Icone nome="pino" />
+    <span>Rota<span class="sr-only"> (Google Maps, abre em nova aba)</span></span>
+  </a>
+</nav>
+
+<script>
+  // Fallback para navegadores sem scroll-driven animations: esconde a barra quando o rodapé aparece.
+  if (!CSS.supports('animation-timeline: view()')) {
+    const barra = document.querySelector<HTMLElement>('[data-barra-mobile]');
+    const rodape = document.querySelector('[data-rodape]');
+    if (barra && rodape) {
+      new IntersectionObserver(([e]) => {
+        barra.toggleAttribute('data-oculta', !!e?.isIntersecting);
+      }).observe(rodape);
+    }
+  }
+</script>
+
+<style>
+  .barra-mobile {
+    position: fixed;
+    inset: auto 0.75rem calc(0.75rem + env(safe-area-inset-bottom));
+    z-index: 40;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 0.25rem;
+    padding: 0.35rem;
+    border: 1px solid oklch(100% 0 0 / 0.1);
+    border-radius: 1.25rem;
+    transition:
+      transform 0.35s var(--ease-saida),
+      opacity 0.35s var(--ease-saida);
+  }
+  .barra-mobile[data-oculta] {
+    transform: translateY(140%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .barra-mobile__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    min-height: 3.25rem;
+    border-radius: 0.95rem;
+    color: var(--color-washi-50);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .barra-mobile__item--principal {
+    flex-direction: row;
+    gap: 0.5rem;
+    background: var(--color-daruma-600);
+    font-size: 0.9rem;
+  }
+  @media (min-width: 64rem) {
+    .barra-mobile {
+      display: none;
+    }
+  }
+  /* Esconde quando o rodapé entra na tela (sem JS). */
+  @supports (animation-timeline: view()) {
+    .barra-mobile {
+      animation: esconder-barra linear both;
+      animation-timeline: --rodape;
+      animation-range: entry 0% entry 30%;
+    }
+    @keyframes esconder-barra {
+      to {
+        transform: translateY(140%);
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+  }
+</style>

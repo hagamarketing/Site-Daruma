@@ -1,0 +1,38 @@
+---
+import heroChef from '@/assets/fotos/hero-chef.jpg';
+import AlmocoDomingo from '@/components/sections/AlmocoDomingo.astro';
+import Avaliacoes from '@/components/sections/Avaliacoes.astro';
+import Contato from '@/components/sections/Contato.astro';
+import Delivery from '@/components/sections/Delivery.astro';
+import Destaques from '@/components/sections/Destaques.astro';
+import FaixaMarca from '@/components/sections/FaixaMarca.astro';
+import Galeria from '@/components/sections/Galeria.astro';
+import Hero from '@/components/sections/Hero.astro';
+import Instagram from '@/components/sections/Instagram.astro';
+import Reservas from '@/components/sections/Reservas.astro';
+import Rodizio from '@/components/sections/Rodizio.astro';
+import Sobre from '@/components/sections/Sobre.astro';
+import { faq } from '@/data/faq';
+import Base from '@/layouts/Base.astro';
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.pergunta, acceptedAnswer: { '@type': 'Answer', text: f.resposta } })),
+};
+---
+
+<Base imagem={heroChef} imagemAlt="Chef do Daruma Temaki e Rolls finalizando um temaki no balcão" jsonLd={[faqSchema]}>
+  <Hero />
+  <FaixaMarca />
+  <Rodizio />
+  <AlmocoDomingo />
+  <Destaques />
+  <Delivery />
+  <Reservas />
+  <Avaliacoes />
+  <Sobre />
+  <Galeria />
+  <Instagram />
+  <Contato />
+</Base>

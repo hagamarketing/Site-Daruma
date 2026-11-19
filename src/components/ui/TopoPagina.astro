@@ -1,0 +1,79 @@
+---
+/** Topo das páginas internas: migalhas, rótulo, H1 (slot "titulo") e introdução (slot padrão). */
+import Kanji from '@/components/ui/Kanji.astro';
+import type { PalavraJaponesa } from '@/data/japones';
+
+interface Props {
+  rotulo?: string | undefined;
+  /** Nome desta página nas migalhas. */
+  pagina: string;
+  kanji?: PalavraJaponesa | undefined;
+}
+const { rotulo, pagina, kanji } = Astro.props;
+---
+
+<header class="topo-pagina">
+  {kanji && <Kanji palavra={kanji} class="topo-pagina__kanji" />}
+  <div class="container-site topo-pagina__conteudo">
+    <nav aria-label="Você está em" class="migalhas">
+      <ol role="list">
+        <li><a href="/">Início</a></li>
+        <li><span aria-current="page">{pagina}</span></li>
+      </ol>
+    </nav>
+    {rotulo && <p class="rotulo topo-pagina__rotulo">{rotulo}</p>}
+    <h1 class="text-titulo topo-pagina__h1"><slot name="titulo" /></h1>
+    <div class="topo-pagina__intro"><slot /></div>
+  </div>
+</header>
+
+<style>
+  .topo-pagina {
+    position: relative;
+    overflow: clip;
+    padding: clamp(8rem, 6rem + 6vw, 11rem) 0 clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+  .topo-pagina :global(.topo-pagina__kanji) {
+    position: absolute;
+    top: 3rem;
+    right: -2rem;
+    opacity: 0.035;
+  }
+  .topo-pagina__conteudo {
+    position: relative;
+  }
+  .migalhas ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    margin: 0;
+    padding: 0;
+    font-size: 0.8125rem;
+    color: var(--color-washi-300);
+  }
+  .migalhas li + li::before {
+    content: '/';
+    margin-right: 0.5rem;
+    color: var(--color-sumi-600);
+  }
+  .migalhas a {
+    color: var(--color-washi-300);
+    text-underline-offset: 3px;
+  }
+  .migalhas [aria-current] {
+    color: var(--color-washi-50);
+  }
+  .topo-pagina__rotulo {
+    margin-top: 2.5rem;
+  }
+  .topo-pagina__h1 {
+    max-width: 18ch;
+    margin-top: 0.75rem;
+  }
+  .topo-pagina__intro {
+    max-width: 60ch;
+    margin-top: 1.5rem;
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+    color: var(--color-washi-300);
+  }
+</style>

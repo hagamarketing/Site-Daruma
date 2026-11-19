@@ -1,0 +1,44 @@
+---
+/** Selo/badge. Texto sempre visível (nunca só ícone). */
+interface Props {
+  variante?: 'ouro' | 'daruma' | 'neutro' | 'salmao' | 'sucesso';
+  class?: string;
+}
+const { variante = 'neutro', class: classe } = Astro.props;
+---
+
+<span class:list={['selo', `selo--${variante}`, classe]}><slot /></span>
+
+<style>
+  .selo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-pilula);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .selo--neutro {
+    color: var(--color-washi-300);
+    border-color: var(--color-sumi-600);
+  }
+  .selo--ouro {
+    color: var(--color-gold-400);
+  }
+  .selo--salmao {
+    color: var(--color-salmon-400);
+  }
+  .selo--sucesso {
+    color: var(--color-sucesso-400);
+  }
+  .selo--daruma {
+    color: var(--color-washi-50);
+    background: var(--color-daruma-600);
+    border-color: var(--color-daruma-600);
+  }
+</style>

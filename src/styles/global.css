@@ -1,0 +1,630 @@
+@import "tailwindcss";
+
+/*
+ * Design system — Daruma Temaki e Rolls
+ * "Noite em Marília, alma de Tóquio"
+ * Tokens em oklch. O contraste AA de cada par texto/fundo é verificado em tests/unit/contraste.test.ts.
+ */
+
+@theme {
+  /* Sumi (tinta): fundos */
+  --color-sumi-950: oklch(16% 0.003 67.6); /* #0E0D0C fundo principal */
+  --color-sumi-900: oklch(19.5% 0.005 60);
+  --color-sumi-800: oklch(22.9% 0.006 56.1); /* #1F1C1A cards, superfícies */
+  --color-sumi-700: oklch(30% 0.008 56); /* bordas */
+  --color-sumi-600: oklch(40% 0.01 60); /* bordas fortes, divisores */
+
+  /* Washi (papel): texto e fundos claros */
+  --color-washi-50: oklch(95.4% 0.013 82.4); /* #F4EFE6 */
+  --color-washi-300: oklch(78% 0.02 70); /* texto secundário */
+
+  /* Daruma (vermelho): ação */
+  --color-daruma-400: oklch(66% 0.2 27); /* texto vermelho sobre fundo escuro (AA) */
+  --color-daruma-600: oklch(55.8% 0.207 28.8); /* #D2261E CTAs, destaques */
+  --color-daruma-700: oklch(48% 0.19 28.8); /* hover/pressionado */
+
+  --color-salmon-400: oklch(73.4% 0.138 43.9); /* #F08A5D detalhes, hovers */
+  --color-gold-400: oklch(73.7% 0.101 82.7); /* #C9A45C selos, notas, ícones */
+
+  --color-sucesso-400: oklch(78% 0.15 150); /* status "aberto" */
+
+  /* Tipografia (variáveis geradas pela Fonts API do Astro) */
+  --font-display: var(--font-instrument-serif);
+  --font-sans: var(--font-manrope);
+  --font-jp: var(--font-shippori);
+
+  --text-display: clamp(3rem, 1.6rem + 7vw, 8.5rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.02em;
+  --text-titulo: clamp(2.25rem, 1.5rem + 3.6vw, 4.75rem);
+  --text-titulo--line-height: 1;
+  --text-titulo--letter-spacing: -0.015em;
+  --text-subtitulo: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+  --text-subtitulo--line-height: 1.1;
+  --text-jp: clamp(8rem, 4rem + 22vw, 26rem);
+  --text-jp--line-height: 1;
+
+  --radius-cartao: 1.25rem;
+  --radius-pilula: 999px;
+
+  --ease-pincel: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-saida: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --shadow-cartao: 0 1px 0 0 oklch(100% 0 0 / 0.04) inset, 0 24px 48px -24px oklch(0% 0 0 / 0.7);
+
+  --animate-letreiro: letreiro 40s linear infinite;
+  --animate-pulso: pulso 2.4s var(--ease-saida) infinite;
+
+  @keyframes letreiro {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+  @keyframes pulso {
+    0% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    80%,
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+}
+
+/*
+ * Fallbacks com métricas ajustadas para evitar layout shift na troca de fonte.
+ * O Astro já gera um fallback com local("Arial") / local("Times New Roman"), que não existem
+ * no Android nem em muitos Linux; estes cobrem as fontes equivalentes de cada sistema.
+ * Valores de size-adjust/ascent/descent iguais aos calculados pelo Astro.
+ */
+@font-face {
+  font-family: "Manrope Fallback";
+  src:
+    local("Arial"), local("Helvetica"), local("Roboto"), local("Liberation Sans"), local("Arimo"),
+    local("DejaVu Sans");
+  size-adjust: 99.4839%;
+  ascent-override: 107.153%;
+  descent-override: 30.1556%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Instrument Serif Fallback";
+  src:
+    local("Times New Roman"), local("Times"), local("Liberation Serif"), local("Tinos"), local("Noto Serif"),
+    local("DejaVu Serif");
+  size-adjust: 88.3692%;
+  ascent-override: 112.0299%;
+  descent-override: 35.0801%;
+  line-gap-override: 0%;
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    color-scheme: dark;
+    background-color: var(--color-sumi-950);
+    color: var(--color-washi-50);
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    scroll-padding-top: 6rem;
+  }
+
+  :root {
+    /* Permite que a barra fixa do celular saiba quando o rodapé entra na tela. */
+    timeline-scope: --rodape;
+    --altura-barra-mobile: 5.5rem;
+    /* Recuo lateral do .container-site: alinha trilhos de largura total com o conteúdo. */
+    --respiro: clamp(1rem, 0.5rem + 2.5vw, 3rem);
+    --recuo-container: max(var(--respiro), calc((100% - 88rem) / 2 + var(--respiro)));
+  }
+
+  @media (min-width: 64rem) {
+    :root {
+      --altura-barra-mobile: 0px;
+    }
+  }
+
+  [data-rodape] {
+    view-timeline: --rodape block;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--color-sumi-950);
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  :where(h1, h2, h3) em {
+    font-style: italic;
+    color: var(--color-salmon-400);
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-daruma-600);
+    color: var(--color-washi-50);
+  }
+
+  html:not(.js) [data-somente-js] {
+    display: none !important;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-400);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* ---------- Transição entre páginas: cortina + fade cruzado (View Transitions entre documentos) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+    types: pagina;
+  }
+
+  /* Só na troca de página (tipo "pagina"); transições internas, como o lightbox, usam o padrão. */
+  html:active-view-transition-type(pagina)::view-transition-old(root) {
+    animation: 0.3s var(--ease-pincel) both pagina-sai;
+  }
+
+  html:active-view-transition-type(pagina)::view-transition-new(root) {
+    animation: 0.55s var(--ease-saida) 0.08s both pagina-entra;
+  }
+
+  /* Foto do prato expande do card até a página de detalhe (nome compartilhado prato-<slug>). */
+  ::view-transition-group(*.prato) {
+    z-index: 2;
+    animation-duration: 0.6s;
+    animation-timing-function: var(--ease-saida);
+  }
+
+  ::view-transition-old(*.prato),
+  ::view-transition-new(*.prato) {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* O header fica parado entre as páginas. */
+  html:active-view-transition-type(pagina) [data-cabecalho] {
+    view-transition-name: cabecalho;
+  }
+
+  @keyframes pagina-sai {
+    to {
+      opacity: 0;
+      transform: translateY(-1.5%);
+    }
+  }
+
+  @keyframes pagina-entra {
+    from {
+      clip-path: inset(100% 0 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+}
+
+/* ---------- Preloader: o olho do Daruma é pintado e a cortina vermelha abre (1ª visita da sessão) ---------- */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--color-daruma-600);
+  color: var(--color-washi-50);
+  animation: preloader-cortina 0.55s var(--ease-pincel) 0.6s both;
+  cursor: pointer;
+}
+
+.preloader svg {
+  width: clamp(5rem, 4rem + 6vw, 8rem);
+  overflow: visible;
+}
+
+.preloader__contorno,
+.preloader__pupila {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.preloader__contorno {
+  animation: preloader-traco 0.35s var(--ease-pincel) both;
+}
+
+.preloader__pupila {
+  animation: preloader-traco 0.3s var(--ease-pincel) 0.3s both;
+}
+
+.preloader__dica {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+@keyframes preloader-traco {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes preloader-cortina {
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+/*
+ * ---------- Hero: o título fica oculto até o SplitText (com rede de segurança em CSS) ----------
+ * Com o preloader na tela, o título não é ocultado: a cortina já o cobre, e assim ele pinta cedo (LCP).
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not([data-preloader-sessao]) [data-split] {
+    visibility: hidden;
+    animation: mostrar-fallback 0s 2.5s forwards;
+  }
+}
+
+@keyframes mostrar-fallback {
+  to {
+    visibility: visible;
+  }
+}
+
+/* ---------- Galeria: fotos crescem e ganham cor ao entrar na tela (sem JS) ---------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-galeria] img {
+      animation: foto-revela linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+  }
+}
+
+@keyframes foto-revela {
+  from {
+    transform: scale(1.18);
+    filter: grayscale(1) brightness(0.55);
+  }
+  to {
+    transform: scale(1);
+    filter: grayscale(0) brightness(1);
+  }
+}
+
+/* ---------- Cursor personalizado (desktop, ponteiro fino) ---------- */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid oklch(95.4% 0.013 82.4 / 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.cursor__rotulo {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-sumi-950);
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 0.2s,
+    transform 0.3s var(--ease-saida);
+}
+
+.cursor::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-washi-50);
+  transform: scale(0);
+  transition: transform 0.35s var(--ease-saida);
+}
+
+.cursor--ativo {
+  border-color: transparent;
+}
+
+.cursor--ativo::before {
+  transform: scale(2);
+}
+
+.cursor--ativo .cursor__rotulo {
+  position: relative;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ---------- Lightbox ---------- */
+.lightbox {
+  width: min(100% - 2rem, 72rem);
+  max-width: none;
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  padding: 1rem;
+  border: 1px solid var(--color-sumi-700);
+  border-radius: var(--radius-cartao);
+  background: var(--color-sumi-950);
+  color: var(--color-washi-50);
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity 0.3s var(--ease-saida),
+    transform 0.3s var(--ease-saida),
+    overlay 0.3s allow-discrete,
+    display 0.3s allow-discrete;
+}
+
+.lightbox[open] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@starting-style {
+  .lightbox[open] {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.lightbox::backdrop {
+  background: oklch(0% 0 0 / 0.85);
+  backdrop-filter: blur(4px);
+}
+
+.lightbox__figura {
+  margin: 0;
+}
+
+.lightbox__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(100dvh - 9rem);
+  object-fit: contain;
+  border-radius: 0.75rem;
+}
+
+.lightbox__legenda {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-washi-300);
+}
+
+.lightbox__controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.lightbox__contador {
+  font-size: 0.875rem;
+  color: var(--color-washi-300);
+}
+
+.lightbox__fechar {
+  margin-left: auto;
+}
+
+/* ---------- Texturas ---------- */
+@layer components {
+  /* Grão de filme: imagem estática, sem custo de animação. */
+  .grao::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 220px;
+    opacity: 0.07;
+  }
+
+  .padrao-seigaiha {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23C9A45C' stroke-width='.6'%3E%3Ccircle cx='0' cy='-10' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='0' cy='-10' r='19'/%3E%3Ccircle cx='0' cy='-10' r='14'/%3E%3Ccircle cx='0' cy='-10' r='9'/%3E%3Ccircle cx='0' cy='-10' r='4'/%3E%3Ccircle cx='40' cy='-10' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='40' cy='-10' r='19'/%3E%3Ccircle cx='40' cy='-10' r='14'/%3E%3Ccircle cx='40' cy='-10' r='9'/%3E%3Ccircle cx='40' cy='-10' r='4'/%3E%3Ccircle cx='-20' cy='0' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='-20' cy='0' r='19'/%3E%3Ccircle cx='-20' cy='0' r='14'/%3E%3Ccircle cx='-20' cy='0' r='9'/%3E%3Ccircle cx='-20' cy='0' r='4'/%3E%3Ccircle cx='20' cy='0' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='20' cy='0' r='19'/%3E%3Ccircle cx='20' cy='0' r='14'/%3E%3Ccircle cx='20' cy='0' r='9'/%3E%3Ccircle cx='20' cy='0' r='4'/%3E%3Ccircle cx='60' cy='0' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='60' cy='0' r='19'/%3E%3Ccircle cx='60' cy='0' r='14'/%3E%3Ccircle cx='60' cy='0' r='9'/%3E%3Ccircle cx='60' cy='0' r='4'/%3E%3Ccircle cx='0' cy='10' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='0' cy='10' r='19'/%3E%3Ccircle cx='0' cy='10' r='14'/%3E%3Ccircle cx='0' cy='10' r='9'/%3E%3Ccircle cx='0' cy='10' r='4'/%3E%3Ccircle cx='40' cy='10' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='40' cy='10' r='19'/%3E%3Ccircle cx='40' cy='10' r='14'/%3E%3Ccircle cx='40' cy='10' r='9'/%3E%3Ccircle cx='40' cy='10' r='4'/%3E%3Ccircle cx='-20' cy='20' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='-20' cy='20' r='19'/%3E%3Ccircle cx='-20' cy='20' r='14'/%3E%3Ccircle cx='-20' cy='20' r='9'/%3E%3Ccircle cx='-20' cy='20' r='4'/%3E%3Ccircle cx='20' cy='20' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='20' cy='20' r='19'/%3E%3Ccircle cx='20' cy='20' r='14'/%3E%3Ccircle cx='20' cy='20' r='9'/%3E%3Ccircle cx='20' cy='20' r='4'/%3E%3Ccircle cx='60' cy='20' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='60' cy='20' r='19'/%3E%3Ccircle cx='60' cy='20' r='14'/%3E%3Ccircle cx='60' cy='20' r='9'/%3E%3Ccircle cx='60' cy='20' r='4'/%3E%3Ccircle cx='0' cy='30' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='0' cy='30' r='19'/%3E%3Ccircle cx='0' cy='30' r='14'/%3E%3Ccircle cx='0' cy='30' r='9'/%3E%3Ccircle cx='0' cy='30' r='4'/%3E%3Ccircle cx='40' cy='30' r='20' fill='%230E0D0C'/%3E%3Ccircle cx='40' cy='30' r='19'/%3E%3Ccircle cx='40' cy='30' r='14'/%3E%3Ccircle cx='40' cy='30' r='9'/%3E%3Ccircle cx='40' cy='30' r='4'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 40px 20px;
+  }
+
+  /* Asanoha como máscara: herda a cor de currentColor. */
+  .padrao-asanoha {
+    background-color: currentColor;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='69.28' viewBox='0 0 40 69.28'%3E%3Cpath d='M-20 -34.64L-40 0M-20 -34.64L-20 -11.55M-40 0L0 0M-40 0L-20 -11.55M0 0L-20 -34.64M0 0L-20 -11.55M-20 -34.64L20 -34.64M-20 -34.64L0 -23.09M20 -34.64L0 0M20 -34.64L0 -23.09M0 0L0 -23.09M20 -34.64L20 -11.55M0 0L40 0M0 0L20 -11.55M40 0L20 -34.64M40 0L20 -11.55M20 -34.64L60 -34.64M20 -34.64L40 -23.09M60 -34.64L40 0M60 -34.64L40 -23.09M40 0L40 -23.09M60 -34.64L60 -11.55M40 0L80 0M40 0L60 -11.55M80 0L60 -34.64M80 0L60 -11.55M60 -34.64L100 -34.64M60 -34.64L80 -23.09M100 -34.64L80 0M100 -34.64L80 -23.09M80 0L80 -23.09M-40 0L-20 11.55M0 0L-20 34.64M0 0L-20 11.55M-20 34.64L-40 0M-20 34.64L-20 11.55M0 0L0 23.09M-20 34.64L20 34.64M-20 34.64L0 23.09M20 34.64L0 0M20 34.64L0 23.09M0 0L20 11.55M40 0L20 34.64M40 0L20 11.55M20 34.64L20 11.55M40 0L40 23.09M20 34.64L60 34.64M20 34.64L40 23.09M60 34.64L40 0M60 34.64L40 23.09M40 0L60 11.55M80 0L60 34.64M80 0L60 11.55M60 34.64L60 11.55M80 0L80 23.09M60 34.64L100 34.64M60 34.64L80 23.09M100 34.64L80 0M100 34.64L80 23.09M-20 34.64L-40 69.28M-20 34.64L-20 57.74M-40 69.28L0 69.28M-40 69.28L-20 57.74M0 69.28L-20 34.64M0 69.28L-20 57.74M-20 34.64L0 46.19M20 34.64L0 69.28M20 34.64L0 46.19M0 69.28L0 46.19M20 34.64L20 57.74M0 69.28L40 69.28M0 69.28L20 57.74M40 69.28L20 34.64M40 69.28L20 57.74M20 34.64L40 46.19M60 34.64L40 69.28M60 34.64L40 46.19M40 69.28L40 46.19M60 34.64L60 57.74M40 69.28L80 69.28M40 69.28L60 57.74M80 69.28L60 34.64M80 69.28L60 57.74M60 34.64L80 46.19M100 34.64L80 69.28M100 34.64L80 46.19M80 69.28L80 46.19' fill='none' stroke='black' stroke-width='.6'/%3E%3C/svg%3E");
+    mask-size: 40px 69.28px;
+  }
+
+  .vidro {
+    background-color: oklch(16% 0.003 67.6 / 0.62);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .vidro {
+      background-color: oklch(16% 0.003 67.6 / 0.96);
+    }
+  }
+
+  .rotulo {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold-400);
+  }
+
+  .container-site {
+    width: 100%;
+    max-width: 88rem;
+    margin-inline: auto;
+    padding-inline: var(--respiro);
+  }
+}
+
+/* ---------- Botão com borda de brilho girando ---------- */
+@property --angulo {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@layer components {
+  .btn {
+    --btn-fundo: var(--color-sumi-800);
+    --btn-texto: var(--color-washi-50);
+    --btn-borda: var(--color-sumi-600);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--btn-borda);
+    border-radius: var(--radius-pilula);
+    background-color: var(--btn-fundo);
+    color: var(--btn-texto);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color 0.25s var(--ease-saida),
+      border-color 0.25s var(--ease-saida),
+      transform 0.25s var(--ease-saida);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .btn__texto {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn-primario {
+    --btn-fundo: var(--color-daruma-600);
+    --btn-borda: var(--color-daruma-600);
+  }
+
+  .btn-primario:hover {
+    --btn-fundo: var(--color-daruma-700);
+    --btn-borda: var(--color-daruma-700);
+  }
+
+  .btn-secundario {
+    --btn-fundo: transparent;
+    --btn-borda: var(--color-washi-300);
+  }
+
+  .btn-secundario:hover {
+    --btn-borda: var(--color-salmon-400);
+    --btn-fundo: oklch(73.4% 0.138 43.9 / 0.08);
+  }
+
+  .btn-fantasma {
+    --btn-fundo: transparent;
+    --btn-borda: transparent;
+    padding-inline: 0.75rem;
+  }
+
+  .btn-fantasma:hover {
+    --btn-fundo: var(--color-sumi-800);
+  }
+
+  .btn-pequeno {
+    min-height: 2.5rem;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.875rem;
+  }
+
+  .btn-grande {
+    min-height: 3.5rem;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+
+  /* Brilho: anel cônico mascarado só na borda. */
+  .btn-brilho::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--angulo),
+      transparent 0deg 220deg,
+      var(--color-salmon-400) 280deg,
+      var(--color-gold-400) 320deg,
+      transparent 360deg
+    );
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .btn-brilho::before {
+      animation: girar-angulo 3.2s linear infinite;
+    }
+  }
+}
+
+@keyframes girar-angulo {
+  to {
+    --angulo: 360deg;
+  }
+}
+
+/* ---------- Movimento reduzido ---------- */
+/* !important intencional: o reset precisa vencer qualquer regra. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.2s !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,147 @@
+---
+/** Modalidades do rodízio: o que inclui, preço por dia e turno e regras (src/data/rodizio.ts). */
+import Botao from '@/components/ui/Botao.astro';
+import Cartao from '@/components/ui/Cartao.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import { modalidades } from '@/data/rodizio';
+import { formatarPreco, precoPorExtenso } from '@/scripts/formatar';
+import { type Dia, NOME_DIA } from '@/scripts/horarios';
+
+const dias = (d: Dia[]) => {
+  const n = d.map((x) => NOME_DIA[x].curto);
+  return n.length > 1 ? `${n.slice(0, -1).join(', ')} e ${n.at(-1)}` : (n[0] ?? '');
+};
+const turno = { jantar: 'Jantar', almoco: 'Almoço' } as const;
+---
+
+<section id="precos" class="container-site precos" aria-labelledby="precos-titulo">
+  <SecaoTitulo id="precos-titulo" rotulo="Modalidades e preços">O que vem à mesa, <em>e quanto custa</em></SecaoTitulo>
+  <div class="precos__grade">
+    {
+      modalidades.map((m) => (
+        <Cartao as="article" class="modalidade">
+          <h3 class="text-subtitulo">{m.nome}</h3>
+          <p class="modalidade__desc">{m.descricao}</p>
+          <h4 class="rotulo">Inclui</h4>
+          <ul class="modalidade__inclui">
+            {m.inclui.map((i) => (
+              <li>{i}</li>
+            ))}
+          </ul>
+          <table>
+            <caption class="sr-only">Preços por pessoa: {m.nome}</caption>
+            <thead>
+              <tr>
+                <th scope="col">Dias</th>
+                <th scope="col">Turno</th>
+                <th scope="col">Por pessoa</th>
+              </tr>
+            </thead>
+            <tbody>
+              {m.precos.map((p) => (
+                <tr>
+                  <td>{dias(p.dias)}</td>
+                  <td>{turno[p.turno]}</td>
+                  <td class="preco">
+                    <span aria-hidden="true">{formatarPreco(p.valor)}</span>
+                    <span class="sr-only">{precoPorExtenso(p.valor)}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <dl class="regras">
+            {m.criancas && (
+              <div>
+                <dt>Crianças</dt>
+                <dd>{m.criancas}</dd>
+              </div>
+            )}
+            {m.desperdicio && (
+              <div>
+                <dt>Desperdício</dt>
+                <dd>{m.desperdicio}</dd>
+              </div>
+            )}
+            {m.observacoes.map((o) => (
+              <div>
+                <dt>Observação</dt>
+                <dd>{o}</dd>
+              </div>
+            ))}
+          </dl>
+        </Cartao>
+      ))
+    }
+  </div>
+  <div class="precos__cta">
+    <Botao href="#reservas" olho>Reservar mesa</Botao>
+  </div>
+</section>
+
+<style>
+  .precos {
+    padding-bottom: clamp(4rem, 3rem + 4vw, 7rem);
+  }
+  .precos__grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+    gap: 1.5rem;
+  }
+  .precos__grade :global(.modalidade) {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  }
+  .modalidade__desc {
+    color: var(--color-washi-300);
+  }
+  .modalidade__inclui {
+    display: grid;
+    gap: 0.4rem;
+    padding-left: 1.2rem;
+    list-style: disc;
+  }
+  .modalidade__inclui li::marker {
+    color: var(--color-daruma-400);
+  }
+  table {
+    width: 100%;
+    margin-top: 0.5rem;
+    border-collapse: collapse;
+  }
+  th,
+  td {
+    padding: 0.8rem 0.5rem 0.8rem 0;
+    border-bottom: 1px solid var(--color-sumi-700);
+    text-align: left;
+  }
+  thead th {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-washi-300);
+  }
+  .preco {
+    font-weight: 700;
+    color: var(--color-gold-400);
+    white-space: nowrap;
+  }
+  .regras {
+    display: grid;
+    gap: 0.9rem;
+    margin: 0.5rem 0 0;
+  }
+  .regras dt {
+    font-weight: 600;
+  }
+  .regras dd {
+    margin: 0.2rem 0 0;
+    color: var(--color-washi-300);
+  }
+  .precos__cta {
+    margin-top: 2rem;
+  }
+</style>

@@ -1,0 +1,101 @@
+---
+/**
+ * Boneco Daruma original, estilizado em traço fino.
+ * Os olhos são traços circulares com espessura igual ao diâmetro: quando o traço
+ * é "desenhado" (DrawSVG), o olho parece pintado a pincel.
+ *  - olhos="nenhum": desejo ainda não feito
+ *  - olhos="um": desejo feito (olho esquerdo de quem olha pintado)
+ *  - olhos="dois": desejo realizado
+ */
+interface Props {
+  olhos?: 'nenhum' | 'um' | 'dois';
+  variante?: 'linha' | 'cheio';
+  class?: string;
+  /** Texto alternativo. Sem ele, o desenho é decorativo (aria-hidden). */
+  titulo?: string;
+  id?: string;
+}
+
+const { olhos = 'um', variante = 'linha', class: classe, titulo, id } = Astro.props;
+const cheio = variante === 'cheio';
+const tituloId = id ? `${id}-titulo` : undefined;
+---
+
+<svg
+  id={id}
+  class:list={['daruma', `daruma--${variante}`, classe]}
+  viewBox="0 0 200 220"
+  fill="none"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role={titulo ? 'img' : undefined}
+  aria-hidden={titulo ? undefined : 'true'}
+  aria-labelledby={titulo ? tituloId : undefined}
+  data-olhos={olhos}
+>
+  {titulo && <title id={tituloId}>{titulo}</title>}
+  <g class="daruma__corpo" data-desenho>
+    <path
+      d="M100 12C150 12 182 58 182 122C182 180 146 208 100 208C54 208 18 180 18 122C18 58 50 12 100 12Z"
+      fill={cheio ? 'var(--color-daruma-600)' : 'none'}
+      stroke="var(--color-daruma-600)"
+      stroke-width="2"
+      pathLength="1"
+    />
+    <path
+      d="M100 50C134 50 152 72 152 100C152 130 130 148 100 148C70 148 48 130 48 100C48 72 66 50 100 50Z"
+      fill={cheio ? 'var(--color-washi-50)' : 'none'}
+      stroke={cheio ? 'var(--color-washi-50)' : 'var(--color-washi-50)'}
+      stroke-width="1.5"
+      pathLength="1"
+    />
+  </g>
+  <g
+    class="daruma__rosto"
+    stroke={cheio ? 'var(--color-sumi-950)' : 'var(--color-washi-50)'}
+    stroke-width="1.5"
+    data-desenho
+  >
+    <!-- sobrancelhas (o grou) -->
+    <path d="M63 82Q74 70 92 76" pathLength="1" />
+    <path d="M108 76Q126 70 137 82" pathLength="1" />
+    <!-- contorno dos olhos -->
+    <circle cx="80" cy="98" r="11" pathLength="1" />
+    <circle cx="120" cy="98" r="11" pathLength="1" />
+    <!-- bigode e barba (a tartaruga) -->
+    <path d="M84 118Q92 124 100 119Q108 124 116 118" pathLength="1" />
+    <path d="M78 130Q100 142 122 130" pathLength="1" />
+  </g>
+  <g class="daruma__barriga" stroke="var(--color-gold-400)" stroke-width="1.5" data-desenho>
+    <path d="M66 170Q100 186 134 170" pathLength="1" />
+    <path d="M80 186Q100 195 120 186" pathLength="1" />
+  </g>
+  <!-- pupilas: traço circular de espessura 12 → disco "pintado" -->
+  <path
+    class="daruma__pupila daruma__pupila--esq"
+    d="M80 95a3 3 0 1 1 0 6a3 3 0 1 1 0 -6"
+    stroke={cheio ? 'var(--color-sumi-950)' : 'var(--color-washi-50)'}
+    stroke-width="9"
+    pathLength="1"
+    data-pintado={olhos !== 'nenhum' ? 'true' : 'false'}
+  />
+  <path
+    class="daruma__pupila daruma__pupila--dir"
+    d="M120 95a3 3 0 1 1 0 6a3 3 0 1 1 0 -6"
+    stroke={cheio ? 'var(--color-sumi-950)' : 'var(--color-washi-50)'}
+    stroke-width="9"
+    pathLength="1"
+    data-pintado={olhos === 'dois' ? 'true' : 'false'}
+  />
+</svg>
+
+<style>
+  .daruma {
+    display: block;
+    overflow: visible;
+  }
+  .daruma__pupila[data-pintado='false'] {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+</style>

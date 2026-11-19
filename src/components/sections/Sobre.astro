@@ -1,0 +1,88 @@
+---
+import Daruma from '@/components/ui/Daruma.astro';
+import Kanji from '@/components/ui/Kanji.astro';
+---
+
+<section id="sobre" class="historia" aria-labelledby="historia-titulo" data-historia data-motion="historia">
+  <Kanji palavra="desejo" class="historia__kanji" />
+  <div class="container-site historia__grade">
+    <div class="historia__boneco" data-historia-boneco>
+      <Daruma olhos="dois" id="daruma-historia" titulo="Boneco Daruma com os dois olhos pintados" class="historia__svg" />
+      <p class="historia__mensagem" role="status" data-historia-mensagem></p>
+    </div>
+    <div class="historia__texto">
+      <p class="rotulo">Por que Daruma</p>
+      <h2 id="historia-titulo" class="text-titulo">Um olho para o desejo, <em>outro para quando ele se cumpre</em></h2>
+      <p>
+        No Japão, o boneco Daruma chega sem os olhos pintados. Quem faz um pedido pinta o primeiro olho. O
+        segundo só ganha tinta quando o desejo se realiza.
+      </p>
+      <p>
+        O boneco é redondo e pesado na base: empurre e ele volta a ficar de pé. Virou símbolo de persistência
+        e de boa sorte para começos.
+      </p>
+      <p class="historia__fecho">[PREENCHER] Por que a casa escolheu esse nome: a história em duas ou três frases.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .historia {
+    position: relative;
+    overflow: clip;
+    padding-block: clamp(5rem, 4rem + 5vw, 9rem);
+  }
+  .historia :global(.historia__kanji) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.04;
+  }
+  .historia__grade {
+    position: relative;
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+  }
+  @media (min-width: 56rem) {
+    .historia__grade {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 5rem;
+    }
+  }
+  .historia__boneco {
+    max-width: 22rem;
+    margin-inline: auto;
+  }
+  .historia__boneco[role='button'] {
+    cursor: pointer;
+    border-radius: 1rem;
+  }
+  .historia__mensagem {
+    min-height: 1.6em;
+    margin-top: 1rem;
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-style: italic;
+    text-align: center;
+    color: var(--color-salmon-400);
+  }
+  .historia__boneco :global(.historia__svg) {
+    width: 100%;
+    height: auto;
+  }
+  .historia__texto {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .historia__texto > p:not(.rotulo, .historia__fecho) {
+    max-width: 52ch;
+    font-size: 1.0625rem;
+    color: var(--color-washi-300);
+  }
+  .historia__fecho {
+    max-width: 52ch;
+    font-size: 1.0625rem;
+  }
+</style>

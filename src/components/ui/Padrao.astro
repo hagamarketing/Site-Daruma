@@ -1,0 +1,25 @@
+---
+/** Camada decorativa de padrão japonês em linha fina. */
+interface Props {
+  tipo: 'seigaiha' | 'asanoha';
+  class?: string;
+}
+const { tipo, class: classe } = Astro.props;
+---
+
+<div class:list={['padrao', `padrao-${tipo}`, classe]} aria-hidden="true"></div>
+
+<style>
+  .padrao {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .padrao-seigaiha {
+    opacity: 0.18;
+  }
+  .padrao-asanoha {
+    color: var(--color-gold-400);
+    opacity: 0.12;
+  }
+</style>

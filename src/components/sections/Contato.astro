@@ -1,0 +1,92 @@
+---
+import MapaEstilizado from '@/components/ui/MapaEstilizado.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import StatusBadge from '@/components/ui/StatusBadge.astro';
+import TabelaHorarios from '@/components/ui/TabelaHorarios.astro';
+import Botao from '@/components/ui/Botao.astro';
+import Icone from '@/components/ui/Icone.astro';
+import Perguntas from '@/components/ui/Perguntas.astro';
+import { faq, faqIntro } from '@/data/faq';
+import { linkWhatsApp, links, mensagens, site } from '@/data/site';
+
+const { endereco } = site;
+const titulo = endereco.rua;
+---
+
+<section id="contato" class="local" aria-labelledby="local-titulo">
+  <div class="container-site local__grade">
+    <div class="local__info">
+      <SecaoTitulo id="local-titulo" rotulo="Endereço e horário">{titulo}</SecaoTitulo>
+      <StatusBadge />
+      <address class="local__endereco">
+        {endereco.rua}<br />
+        {endereco.bairro}, {endereco.cidade} – {endereco.uf}<br />
+        CEP {endereco.cep}
+      </address>
+      <div class="local__botoes">
+        <Botao href={links.googleMaps} evento="rota" olho>
+          <Icone nome="pino" tamanho={18} /> Rota no Google Maps
+        </Botao>
+        <Botao href={links.waze} evento="rota" variante="secundario">Abrir no Waze</Botao>
+        <Botao href={linkWhatsApp(mensagens.geral)} evento="reserva_whatsapp" variante="secundario">
+          <Icone nome="mensagem" tamanho={18} /> WhatsApp {site.whatsapp.exibicao}
+        </Botao>
+        <Botao href={links.telefone} evento="ligacao" variante="secundario">
+          <Icone nome="telefone" tamanho={18} /> {site.telefone.exibicao}
+        </Botao>
+      </div>
+      <TabelaHorarios />
+    </div>
+    <MapaEstilizado />
+  </div>
+  <div class="container-site local__faq">
+    <SecaoTitulo id="faq-titulo" rotulo={faqIntro.rotulo}>{faqIntro.titulo}</SecaoTitulo>
+    <Perguntas perguntas={faq} />
+  </div>
+</section>
+
+<style>
+  .local {
+    padding-block: clamp(4rem, 3rem + 4vw, 7rem);
+  }
+  .local__faq {
+    margin-top: clamp(4rem, 3rem + 4vw, 6rem);
+    max-width: 60rem;
+  }
+  .local__grade {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 64rem) {
+    .local__faq {
+    margin-top: clamp(4rem, 3rem + 4vw, 6rem);
+    max-width: 60rem;
+  }
+  .local__grade {
+      grid-template-columns: 1fr 1.1fr;
+      align-items: start;
+      gap: 4rem;
+    }
+  }
+  .local__info {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+  .local__info :global(.secao-titulo) {
+    margin-bottom: 0;
+  }
+  .local__endereco {
+    font-style: normal;
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+  .local__botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .local__info :global(.tabela-horarios) {
+    margin-top: 0.5rem;
+  }
+</style>

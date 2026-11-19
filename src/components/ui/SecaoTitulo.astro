@@ -1,0 +1,35 @@
+---
+/** Cabeçalho de seção: rótulo + H2 (ênfase em itálico via <em> no slot). */
+interface Props {
+  rotulo?: string;
+  id: string;
+  alinhamento?: 'esquerda' | 'centro';
+  class?: string;
+}
+const { rotulo, id, alinhamento = 'esquerda', class: classe } = Astro.props;
+---
+
+<div class:list={['secao-titulo', `secao-titulo--${alinhamento}`, classe]}>
+  {rotulo && <p class="rotulo">{rotulo}</p>}
+  <h2 id={id} class="text-titulo"><slot /></h2>
+  {Astro.slots.has('intro') && <div class="secao-titulo__intro"><slot name="intro" /></div>}
+</div>
+
+<style>
+  .secao-titulo {
+    display: grid;
+    gap: 0.9rem;
+    max-width: 52rem;
+    margin-bottom: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  }
+  .secao-titulo--centro {
+    margin-inline: auto;
+    text-align: center;
+    justify-items: center;
+  }
+  .secao-titulo__intro {
+    max-width: 58ch;
+    font-size: 1.0625rem;
+    color: var(--color-washi-300);
+  }
+</style>

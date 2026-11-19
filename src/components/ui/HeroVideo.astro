@@ -1,0 +1,75 @@
+---
+/**
+ * Vídeo do hero: só carrega depois da imagem de capa (LCP), nunca com Save-Data
+ * nem com movimento reduzido, e tem botão de pausa. Sem `src`, nada é renderizado.
+ */
+interface Props {
+  /** Caminho em /public, ex.: /video/hero.mp4 (≤ 1,5 MB, sem áudio). */
+  src?: string | undefined;
+  poster: string;
+}
+const { src, poster } = Astro.props;
+---
+
+{
+  src && (
+    <div class="hero-video" data-hero-video>
+      <video muted loop playsinline preload="none" poster={poster} data-src={src} aria-hidden="true" tabindex="-1" />
+      <button type="button" class="btn btn-fantasma btn-pequeno hero-video__pausa" data-pausa hidden>
+        <span data-rotulo>Pausar vídeo</span>
+      </button>
+    </div>
+  )
+}
+
+<script>
+  const bloco = document.querySelector<HTMLElement>('[data-hero-video]');
+  const video = bloco?.querySelector('video');
+  const botao = bloco?.querySelector<HTMLButtonElement>('[data-pausa]');
+  const conexao = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  const reduzido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (video && botao && !conexao?.saveData && !reduzido) {
+    const carregar = () => {
+      video.src = video.dataset.src ?? '';
+      video.addEventListener('canplay', () => video.classList.add('pronto'), { once: true });
+      void video.play().catch(() => undefined);
+      botao.hidden = false;
+    };
+    // Depois do load (LCP já aconteceu) e com o navegador ocioso.
+    const quandoOcioso = (fn: () => void) => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 3000 }) : setTimeout(fn, 1500));
+    if (document.readyState === 'complete') quandoOcioso(carregar);
+    else addEventListener('load', () => quandoOcioso(carregar), { once: true });
+    botao.addEventListener('click', () => {
+      const rotulo = botao.querySelector('[data-rotulo]');
+      if (video.paused) {
+        void video.play();
+        if (rotulo) rotulo.textContent = 'Pausar vídeo';
+      } else {
+        video.pause();
+        if (rotulo) rotulo.textContent = 'Reproduzir vídeo';
+      }
+    });
+  }
+</script>
+
+<style>
+  .hero-video video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.8s;
+  }
+  .hero-video video:global(.pronto) {
+    opacity: 1;
+  }
+  .hero-video__pausa {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 2;
+    background: oklch(16% 0.003 67.6 / 0.7);
+  }
+</style>

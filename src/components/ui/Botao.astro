@@ -1,0 +1,74 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import OlhoDaruma from '@/components/ui/OlhoDaruma.astro';
+
+type Base = {
+  variante?: 'primario' | 'secundario' | 'fantasma';
+  tamanho?: 'pequeno' | 'medio' | 'grande';
+  /** Borda com brilho girando (CTAs principais). */
+  brilho?: boolean;
+  /** Efeito magnético (ligado pelo módulo de motion). */
+  magnetico?: boolean;
+  /** Mostra o olho do Daruma antes do texto. */
+  olho?: boolean;
+  /** Evento de conversão (src/scripts/analytics.ts). */
+  evento?: string;
+  class?: string;
+};
+
+type Props = Base &
+  (
+    | ({ href: string } & Omit<HTMLAttributes<'a'>, 'class'>)
+    | ({ href?: undefined } & Omit<HTMLAttributes<'button'>, 'class'>)
+  );
+
+const {
+  variante = 'primario',
+  tamanho = 'medio',
+  brilho = false,
+  magnetico = false,
+  olho = false,
+  evento,
+  class: classe,
+  href,
+  ...resto
+} = Astro.props;
+
+const classes = [
+  'btn',
+  `btn-${variante}`,
+  tamanho !== 'medio' && `btn-${tamanho}`,
+  brilho && 'btn-brilho',
+  classe,
+];
+const externo = typeof href === 'string' && /^https?:\/\//.test(href);
+const dados = {
+  'data-magnetico': magnetico ? '' : undefined,
+  'data-evento': evento,
+};
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      class:list={classes}
+      {...(externo ? { target: '_blank', rel: 'noopener' } : {})}
+      {...dados}
+      {...(resto as HTMLAttributes<'a'>)}
+    >
+      {olho && <OlhoDaruma />}
+      <span class="btn__texto">
+        <slot />
+      </span>
+      {externo && <span class="sr-only"> (abre em nova aba)</span>}
+    </a>
+  ) : (
+    <button type="button" class:list={classes} {...dados} {...(resto as HTMLAttributes<'button'>)}>
+      {olho && <OlhoDaruma />}
+      <span class="btn__texto">
+        <slot />
+      </span>
+    </button>
+  )
+}

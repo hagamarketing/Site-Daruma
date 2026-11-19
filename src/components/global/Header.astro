@@ -1,0 +1,288 @@
+---
+import { links, navegacao, site } from '@/data/site';
+import Logo from '@/components/ui/Logo.astro';
+import Botao from '@/components/ui/Botao.astro';
+import Icone from '@/components/ui/Icone.astro';
+
+const caminho = Astro.url.pathname.replace(/\.html$/, '');
+const ativo = (href: string) => (href === caminho ? 'page' : undefined);
+const { aviso } = site;
+---
+
+<header class="cabecalho" data-cabecalho>
+  {
+    aviso.ativo && aviso.texto && (
+      <p class="aviso">
+        {aviso.link ? <a href={aviso.link}>{aviso.texto}</a> : aviso.texto}
+      </p>
+    )
+  }
+  <div class="cabecalho__barra vidro">
+    <div class="container-site cabecalho__conteudo">
+      <Logo class="cabecalho__logo" />
+
+      <nav class="cabecalho__nav" aria-label="Principal">
+        <ul role="list">
+          {
+            navegacao.map((item) => (
+              <li>
+                <a href={item.href} aria-current={ativo(item.href)}>
+                  {item.rotulo}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="cabecalho__acoes">
+        <Botao href="/#reservas" tamanho="pequeno" olho brilho magnetico>Reservar</Botao>
+        <button
+          type="button"
+          class="btn btn-fantasma btn-pequeno cabecalho__menu"
+          command="show-modal"
+          commandfor="menu-mobile"
+          aria-haspopup="dialog"
+          aria-controls="menu-mobile"
+        >
+          <Icone nome="menu" />
+          <span class="sr-only">Abrir menu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<dialog id="menu-mobile" class="menu-mobile" aria-label="Menu">
+  <div class="menu-mobile__topo container-site">
+    <Logo />
+    <button type="button" class="btn btn-fantasma btn-pequeno" command="close" commandfor="menu-mobile" autofocus>
+      <Icone nome="fechar" />
+      <span class="sr-only">Fechar menu</span>
+    </button>
+  </div>
+  <nav class="container-site" aria-label="Principal (celular)">
+    <ul role="list" class="menu-mobile__lista">
+      {
+        [{ rotulo: 'Início', href: '/' }, ...navegacao, { rotulo: 'Reservas', href: '/#reservas' }].map(
+          (item, i) => (
+            <li style={`--i:${i}`}>
+              <a href={item.href} aria-current={item.href === '/' ? undefined : ativo(item.href)}>
+                {item.rotulo}
+              </a>
+            </li>
+          ),
+        )
+      }
+    </ul>
+  </nav>
+  <div class="container-site menu-mobile__rodape">
+    <a href={links.telefone} data-evento="ligacao">{site.telefone.exibicao}</a>
+    <a href={links.instagram} target="_blank" rel="noopener">Instagram<span class="sr-only"> (abre em nova aba)</span></a>
+  </div>
+</dialog>
+
+<script>
+  // Fallback para navegadores sem Invoker Commands (command/commandfor).
+  if (!('command' in HTMLButtonElement.prototype)) {
+    for (const botao of document.querySelectorAll<HTMLButtonElement>('button[commandfor]')) {
+      botao.addEventListener('click', () => {
+        const alvo = document.getElementById(botao.getAttribute('commandfor') ?? '');
+        if (!(alvo instanceof HTMLDialogElement)) return;
+        if (botao.getAttribute('command') === 'show-modal') alvo.showModal();
+        else alvo.close();
+      });
+    }
+  }
+  // Fecha o menu ao navegar por âncora na mesma página.
+  document.getElementById('menu-mobile')?.addEventListener('click', (e) => {
+    const dialogo = e.currentTarget as HTMLDialogElement;
+    if ((e.target as HTMLElement).closest('a')) dialogo.close();
+  });
+</script>
+
+<style>
+  .cabecalho {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    padding: 0.75rem 0.75rem 0;
+    pointer-events: none;
+  }
+  .aviso {
+    pointer-events: auto;
+    max-width: 88rem;
+    margin: 0 auto 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.9rem;
+    background: var(--color-daruma-600);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  .aviso a {
+    color: inherit;
+  }
+  .cabecalho__barra {
+    pointer-events: auto;
+    max-width: 88rem;
+    margin-inline: auto;
+    border: 1px solid oklch(100% 0 0 / 0.08);
+    border-radius: 1.25rem;
+    transform-origin: top center;
+  }
+  .cabecalho__conteudo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    height: 4.25rem;
+    padding-inline: 1rem;
+  }
+  .cabecalho__nav {
+    display: none;
+  }
+  .cabecalho__nav ul {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+  }
+  .cabecalho__nav a {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--radius-pilula);
+    color: var(--color-washi-300);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .cabecalho__nav a:hover,
+  .cabecalho__nav a[aria-current='page'] {
+    color: var(--color-washi-50);
+  }
+  .cabecalho__nav a::after {
+    content: '';
+    position: absolute;
+    inset: auto 0.85rem 0.3rem;
+    height: 1px;
+    background: var(--color-salmon-400);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease-saida);
+  }
+  .cabecalho__nav a:hover::after,
+  .cabecalho__nav a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+  .cabecalho__acoes {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  @media (min-width: 64rem) {
+    .cabecalho__nav {
+      display: block;
+    }
+    .cabecalho__menu {
+      display: none;
+    }
+  }
+
+  /* Encolhe ao rolar: só transform, guiado pela rolagem (sem JS). */
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .cabecalho__barra {
+        animation: encolher linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 240px;
+      }
+      @keyframes encolher {
+        to {
+          transform: translateY(-0.35rem) scale(0.97);
+          border-color: oklch(100% 0 0 / 0.14);
+        }
+      }
+    }
+  }
+
+  /* ---------- Menu mobile (dialog modal: foco preso e Esc nativos) ---------- */
+  .menu-mobile {
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0.75rem 0 2rem;
+    border: 0;
+    background: var(--color-sumi-950);
+    color: var(--color-washi-50);
+    opacity: 0;
+    transition:
+      opacity 0.3s var(--ease-saida),
+      overlay 0.3s allow-discrete,
+      display 0.3s allow-discrete;
+  }
+  .menu-mobile[open] {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+  }
+  @starting-style {
+    .menu-mobile[open] {
+      opacity: 0;
+    }
+  }
+  .menu-mobile::backdrop {
+    background: var(--color-sumi-950);
+  }
+  .menu-mobile__topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4.25rem;
+  }
+  .menu-mobile__lista {
+    margin: 2.5rem 0 0;
+    padding: 0;
+  }
+  .menu-mobile__lista li {
+    border-bottom: 1px solid var(--color-sumi-700);
+    transition:
+      opacity 0.45s var(--ease-saida) calc(var(--i) * 45ms + 80ms),
+      transform 0.45s var(--ease-saida) calc(var(--i) * 45ms + 80ms);
+  }
+  @starting-style {
+    .menu-mobile[open] .menu-mobile__lista li {
+      opacity: 0;
+      transform: translateY(1.25rem);
+    }
+  }
+  .menu-mobile__lista a {
+    display: block;
+    padding: 0.85rem 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.4rem + 3vw, 3rem);
+    line-height: 1.1;
+    color: var(--color-washi-50);
+    text-decoration: none;
+  }
+  .menu-mobile__lista a[aria-current='page'] {
+    font-style: italic;
+    color: var(--color-salmon-400);
+  }
+  .menu-mobile__rodape {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: auto;
+    padding-top: 2rem;
+  }
+  .menu-mobile__rodape a {
+    color: var(--color-washi-300);
+    text-underline-offset: 4px;
+  }
+</style>

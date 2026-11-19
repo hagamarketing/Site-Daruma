@@ -1,0 +1,102 @@
+---
+import TopoPagina from '@/components/ui/TopoPagina.astro';
+import { enderecoLinha, site } from '@/data/site';
+import Base from '@/layouts/Base.astro';
+
+const atualizado = '[PREENCHER] data da última revisão';
+---
+
+<Base
+  titulo="Política de privacidade e cookies | Daruma Temaki e Rolls"
+  descricao="Como o site do Daruma Temaki e Rolls trata dados pessoais e cookies, conforme a LGPD."
+  noindex
+>
+  <TopoPagina rotulo="LGPD" pagina="Privacidade">
+    <Fragment slot="titulo">Política de privacidade e cookies</Fragment>
+    <p>Última atualização: {atualizado}.</p>
+  </TopoPagina>
+
+  <article class="container-site texto-legal">
+    <h2>1. Quem somos</h2>
+    <p>
+      Este site pertence a <strong>{site.razaoSocial}</strong>, inscrita no CNPJ <strong>{site.cnpj}</strong>, com
+      nome fantasia {site.nome}, localizada em {enderecoLinha}. Para assuntos de privacidade, fale com a gente pelo
+      e-mail <strong>{site.emailPrivacidade}</strong> ou pelo telefone {site.telefone.exibicao}.
+    </p>
+
+    <h2>2. Quais dados coletamos</h2>
+    <ul>
+      <li>
+        <strong>Reservas e pedidos pelo WhatsApp:</strong> o site não armazena os dados do formulário de reserva.
+        Ele apenas monta a mensagem e abre o WhatsApp; o que você enviar fica na conversa com a casa.
+      </li>
+      <li>
+        <strong>Navegação:</strong> usamos ferramentas de análise e de publicidade que registram páginas visitadas,
+        cliques em botões (reservar, pedir, ligar, rota) e dados técnicos do dispositivo. Nenhuma delas recebe o seu
+        nome, telefone ou o texto das mensagens.
+      </li>
+    </ul>
+
+    <h2>3. Cookies</h2>
+    <p>Depois que a página termina de carregar, o site pode ativar:</p>
+    <ul>
+      <li><strong>Google Analytics 4:</strong> mede o uso do site (páginas, cliques, origem das visitas).</li>
+      <li><strong>Google Ads e Pixel da Meta:</strong> medem o resultado de anúncios (por exemplo, quantas reservas vieram de uma campanha).</li>
+    </ul>
+    <p>
+      Você pode bloquear ou apagar cookies nas configurações do seu navegador, usar a navegação anônima ou
+      desativar a personalização de anúncios em
+      <a href="https://adssettings.google.com" target="_blank" rel="noopener">adssettings.google.com</a> e nas
+      configurações de anúncios da sua conta da Meta. O site continua funcionando normalmente sem esses cookies.
+    </p>
+
+    <h2>4. Para que usamos os dados</h2>
+    <ul>
+      <li>Responder reservas e pedidos.</li>
+      <li>Entender o uso do site e melhorar o conteúdo.</li>
+      <li>Medir e direcionar anúncios.</li>
+    </ul>
+
+    <h2>5. Compartilhamento</h2>
+    <p>
+      Os dados de navegação são tratados pelos fornecedores das ferramentas citadas (Google e Meta), que podem
+      processá-los fora do Brasil. Pedidos feitos no iFood seguem a política de privacidade do iFood.
+    </p>
+
+    <h2>6. Seus direitos</h2>
+    <p>
+      Pela LGPD, você pode pedir confirmação, acesso, correção, anonimização, portabilidade e exclusão dos seus
+      dados. Basta escrever para o contato do item 1.
+    </p>
+
+    <h2>7. Por quanto tempo guardamos</h2>
+    <p>[PREENCHER] Prazo de retenção das conversas de reserva e dos dados de análise.</p>
+  </article>
+</Base>
+
+<style>
+  .texto-legal {
+    padding-bottom: 4rem;
+    color: var(--color-washi-300);
+  }
+  .texto-legal > * {
+    max-width: 48rem;
+  }
+  .texto-legal h2 {
+    margin: 2.5rem 0 0.75rem;
+    font-size: 1.75rem;
+    color: var(--color-washi-50);
+  }
+  .texto-legal p + p,
+  .texto-legal ul {
+    margin-top: 0.75rem;
+  }
+  .texto-legal ul {
+    display: grid;
+    gap: 0.5rem;
+    padding-left: 1.2rem;
+  }
+  .texto-legal strong {
+    color: var(--color-washi-50);
+  }
+</style>

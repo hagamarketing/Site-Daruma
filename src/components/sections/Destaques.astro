@@ -1,0 +1,42 @@
+---
+import MenuCard from '@/components/ui/MenuCard.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import Botao from '@/components/ui/Botao.astro';
+import { destaques } from '@/data/cardapio';
+
+const pratos = destaques();
+---
+
+<section id="destaques" class="destaques" aria-labelledby="destaques-titulo" data-motion="revelar">
+  <div class="container-site">
+    <SecaoTitulo id="destaques-titulo" rotulo="Do cardápio">
+      Os pratos que <em>mais saem</em> do balcão
+    </SecaoTitulo>
+    <ul role="list" class="destaques__grade">
+      {pratos.map((p) => <li><MenuCard prato={p} mostrarCategoria /></li>)}
+    </ul>
+    <div class="destaques__rodape">
+      <Botao href="/cardapio" variante="secundario" evento="ver_cardapio">Ver o cardápio completo</Botao>
+    </div>
+  </div>
+</section>
+
+<style>
+  .destaques {
+    padding-block: clamp(4rem, 3rem + 4vw, 7rem);
+  }
+  .destaques__grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: clamp(1rem, 0.5rem + 1.5vw, 1.75rem);
+    margin: 0;
+    padding: 0;
+  }
+  .destaques__grade > li {
+    display: grid;
+  }
+  .destaques__rodape {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+</style>

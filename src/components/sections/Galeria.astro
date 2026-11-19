@@ -1,0 +1,85 @@
+---
+import { getImage } from 'astro:assets';
+import Foto from '@/components/ui/Foto.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import { galeria } from '@/data/galeria';
+
+const fotos = await Promise.all(
+  galeria.map(async (f, i) => ({
+    ...f,
+    id: `foto-${i + 1}`,
+    grande: await getImage({
+      src: f.foto,
+      width: Math.min(1600, f.foto.width),
+      format: 'webp',
+      quality: 75,
+    }),
+    formato:
+      f.foto.width > f.foto.height
+        ? 'paisagem'
+        : f.foto.width < f.foto.height
+          ? 'retrato'
+          : 'quadrado',
+  })),
+);
+---
+
+<section id="galeria" class="galeria" aria-labelledby="galeria-titulo" data-motion="galeria">
+  <div class="container-site">
+    <SecaoTitulo id="galeria-titulo" rotulo="A casa">
+      Luz baixa, <em>balcão aceso</em>
+    </SecaoTitulo>
+    <ul role="list" class="galeria__grade" data-galeria>
+      {
+        fotos.map((f) => (
+          <li class:list={['galeria__item', `galeria__item--${f.formato}`]}>
+            <a href={f.grande.src} class="galeria__link" data-lightbox data-largura={f.grande.attributes.width} data-altura={f.grande.attributes.height}>
+              <Foto src={f.foto} alt={f.alt} sizes="(min-width: 64rem) 33vw, 50vw" larguras={[320, 480, 720, 960]} class="galeria__foto" ver />
+              <span class="sr-only"> (ampliar foto)</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .galeria {
+    padding-block: clamp(4rem, 3rem + 4vw, 7rem);
+  }
+  .galeria__grade {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: clamp(8rem, 5rem + 12vw, 16rem);
+    grid-auto-flow: dense;
+    gap: clamp(0.5rem, 0.25rem + 1vw, 1rem);
+    margin: 0;
+    padding: 0;
+  }
+  @media (min-width: 64rem) {
+    .galeria__grade {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .galeria__item--retrato {
+    grid-row: span 2;
+  }
+  .galeria__item--paisagem {
+    grid-column: span 2;
+  }
+  .galeria__link {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 0.9rem;
+    background: var(--color-sumi-800);
+  }
+  .galeria__link :global(.galeria__foto),
+  .galeria__link :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

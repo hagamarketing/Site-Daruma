@@ -1,0 +1,39 @@
+---
+import Daruma from '@/components/ui/Daruma.astro';
+import Botao from '@/components/ui/Botao.astro';
+import Base from '@/layouts/Base.astro';
+---
+
+<Base titulo="Página não encontrada | Daruma Temaki e Rolls" descricao="Esta página não existe." noindex>
+  <section class="container-site nao-encontrada">
+    <Daruma olhos="nenhum" class="nao-encontrada__daruma" />
+    <h1 class="text-titulo">Este desejo <em>ainda não tem olho</em></h1>
+    <p>A página que você procurou não existe ou mudou de endereço.</p>
+    <div class="nao-encontrada__ctas">
+      <Botao href="/">Ir para o início</Botao>
+      <Botao href="/cardapio" variante="secundario" evento="ver_cardapio">Ver o cardápio</Botao>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nao-encontrada {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: center;
+    padding-block: 10rem 4rem;
+    text-align: center;
+  }
+  .nao-encontrada :global(.nao-encontrada__daruma) {
+    width: 8rem;
+  }
+  .nao-encontrada p {
+    color: var(--color-washi-300);
+  }
+  .nao-encontrada__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+</style>

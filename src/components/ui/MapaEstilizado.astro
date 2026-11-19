@@ -1,0 +1,115 @@
+---
+import { site } from '@/data/site';
+
+/**
+ * Mapa ilustrativo escuro (SVG próprio, sem embed de terceiros: zero JS e zero cookies).
+ * Não é cartografia exata: a rota real fica nos botões do Google Maps e do Waze.
+ */
+const { endereco } = site;
+---
+
+<figure class="mapa">
+  <svg viewBox="0 0 640 420" role="img" aria-labelledby="mapa-titulo" preserveAspectRatio="xMidYMid meet">
+    <title id="mapa-titulo">Mapa ilustrativo com a localização do {site.nome}, na {endereco.rua}, {endereco.bairro}</title>
+    <rect width="640" height="420" fill="var(--color-sumi-900)"></rect>
+    <g fill="var(--color-sumi-800)">
+      <rect x="40" y="30" width="150" height="110" rx="6"></rect>
+      <rect x="225" y="30" width="170" height="110" rx="6"></rect>
+      <rect x="430" y="30" width="170" height="70" rx="6"></rect>
+      <rect x="40" y="175" width="150" height="90" rx="6"></rect>
+      <rect x="430" y="135" width="170" height="130" rx="6"></rect>
+      <rect x="40" y="300" width="150" height="90" rx="6"></rect>
+      <rect x="225" y="300" width="170" height="90" rx="6"></rect>
+      <rect x="430" y="300" width="170" height="90" rx="6"></rect>
+    </g>
+    <g fill="none" stroke="var(--color-sumi-600)" stroke-width="10" stroke-linecap="round">
+      <path d="M0 157H640"></path>
+      <path d="M0 283H640"></path>
+      <path d="M207 0V420"></path>
+      <path d="M412 0V420"></path>
+    </g>
+    <path d="M225 175h170v90H225z" fill="var(--color-sumi-700)"></path>
+    <g fill="none" stroke="var(--color-gold-400)" stroke-width="1" opacity=".35">
+      <path d="M0 157H640M0 283H640M207 0V420M412 0V420" stroke-dasharray="4 10"></path>
+    </g>
+
+  </svg>
+  <span class="mapa__pino" aria-hidden="true">
+    <svg viewBox="-34 -34 68 68" width="68" height="68">
+      <circle class="mapa__onda" r="16" fill="var(--color-daruma-600)" opacity=".18"></circle>
+      <path d="M0 18s-16-14-16-27a16 16 0 0 1 32 0C16 4 0 18 0 18Z" fill="var(--color-daruma-600)"></path>
+      <circle cy="-9" r="5.5" fill="var(--color-washi-50)"></circle>
+    </svg>
+  </span>
+  <figcaption class="mapa__legenda" id="mapa-pino">
+    <strong>{site.nome}</strong>
+    <span>{endereco.rua} · {endereco.bairro}</span>
+  </figcaption>
+</figure>
+
+<style>
+  .mapa {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-sumi-700);
+    border-radius: var(--radius-cartao);
+    aspect-ratio: 640 / 420;
+  }
+  /* Pino em HTML (posição em % do desenho 640×420) para servir de âncora ao tooltip. */
+  .mapa__pino {
+    position: absolute;
+    left: calc(310 / 640 * 100%);
+    top: calc(205 / 420 * 100%);
+    width: 4.25rem;
+    height: 4.25rem;
+    translate: -50% -50%;
+    anchor-name: --pino-daruma;
+  }
+  .mapa__pino svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mapa__onda {
+      transform-origin: center;
+      animation: var(--animate-pulso);
+    }
+  }
+  .mapa svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* Tooltip ancorado no pino (CSS anchor positioning); sem suporte, usa posição fixa em %. */
+  .mapa__legenda {
+    position: absolute;
+    left: calc(310 / 640 * 100%);
+    top: calc(170 / 420 * 100%);
+    display: grid;
+    gap: 0.1rem;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--color-sumi-600);
+    border-radius: 0.75rem;
+    background: oklch(16% 0.003 67.6 / 0.92);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    transform: translate(-50%, -100%);
+  }
+  @supports (anchor-name: --a) {
+    .mapa__legenda {
+      position-anchor: --pino-daruma;
+      position-area: top;
+      position-try-fallbacks: flip-block;
+      left: auto;
+      top: auto;
+      margin-bottom: 0.25rem;
+      transform: none;
+    }
+  }
+  .mapa__legenda span {
+    color: var(--color-washi-300);
+  }
+</style>

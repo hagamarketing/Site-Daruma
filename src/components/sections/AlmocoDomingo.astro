@@ -1,0 +1,113 @@
+---
+import almoco from '@/assets/fotos/almoco-domingo.jpg';
+import Foto from '@/components/ui/Foto.astro';
+import Botao from '@/components/ui/Botao.astro';
+import Kanji from '@/components/ui/Kanji.astro';
+import Padrao from '@/components/ui/Padrao.astro';
+import Selo from '@/components/ui/Selo.astro';
+import { horarios } from '@/data/horarios';
+import { formatarTurno } from '@/scripts/horarios';
+
+const turno = horarios.semana.domingo.find((t) => t.nome.toLowerCase().startsWith('almo'));
+---
+
+{
+  turno && (
+    <section id="almoco-domingo" class="almoco" aria-labelledby="almoco-titulo">
+      <div class="container-site almoco__grade">
+        <div class="almoco__foto">
+          <Foto src={almoco} alt="[PREENCHER] Mesa do almoço de domingo com pratos do rodízio à luz do dia" sizes="(min-width: 64rem) 45vw, 92vw" />
+        </div>
+        <div class="almoco__texto">
+          <Padrao tipo="seigaiha" />
+          <Kanji palavra="almoco" class="almoco__kanji" />
+          <Selo variante="daruma">Novidade da casa</Selo>
+          <h2 id="almoco-titulo" class="text-titulo">
+            Agora tem <em>almoço de domingo</em>
+          </h2>
+          <p class="almoco__horario">
+            Domingo, <strong>{formatarTurno(turno)}</strong>
+          </p>
+          <p>
+            O mesmo Daruma da noite, com a luz do meio-dia. Bom para a família, para o aniversário da avó e para
+            quem não abre mão do temaki no fim de semana.
+          </p>
+          <div class="almoco__ctas">
+            <Botao href="/?ocasiao=Almo%C3%A7o%20de%20domingo#reservas" olho>Reservar o almoço</Botao>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .almoco {
+    padding-block: clamp(4rem, 3rem + 4vw, 7rem);
+  }
+  .almoco__grade {
+    display: grid;
+    gap: 2rem;
+    align-items: stretch;
+  }
+  @media (min-width: 64rem) {
+    .almoco__grade {
+      grid-template-columns: 1.1fr 1fr;
+      gap: 0;
+    }
+  }
+  .almoco__foto {
+    min-height: 20rem;
+    overflow: hidden;
+    border-radius: var(--radius-cartao);
+  }
+  .almoco__foto :global(picture),
+  .almoco__foto :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .almoco__texto {
+    position: relative;
+    display: grid;
+    gap: 1.25rem;
+    align-content: center;
+    justify-items: start;
+    padding: clamp(2rem, 1.5rem + 3vw, 4rem);
+    overflow: hidden;
+    border: 1px solid var(--color-sumi-700);
+    border-radius: var(--radius-cartao);
+    background: var(--color-sumi-950);
+  }
+  @media (min-width: 64rem) {
+    .almoco__texto {
+      margin-left: -4rem;
+      margin-block: 3rem;
+    }
+  }
+  .almoco__texto > :not(.padrao, .kanji) {
+    position: relative;
+  }
+  .almoco__texto :global(.almoco__kanji) {
+    position: absolute;
+    right: -1rem;
+    bottom: -3rem;
+    font-size: 12rem;
+  }
+  .almoco__horario {
+    font-size: 1.25rem;
+  }
+  .almoco__horario strong {
+    color: var(--color-salmon-400);
+  }
+  .almoco__texto > p:not(.almoco__horario) {
+    max-width: 44ch;
+    color: var(--color-washi-300);
+  }
+  .almoco__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+</style>

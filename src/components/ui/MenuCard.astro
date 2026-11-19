@@ -1,0 +1,149 @@
+---
+import { CATEGORIAS, type Prato, SELOS } from '@/data/cardapio';
+import { formatarPreco, precoPorExtenso } from '@/scripts/formatar';
+import Foto from '@/components/ui/Foto.astro';
+import Selo from '@/components/ui/Selo.astro';
+
+interface Props {
+  prato: Prato;
+  /** Nível do título dentro da página. */
+  nivel?: 'h2' | 'h3';
+  mostrarCategoria?: boolean;
+}
+const { prato, nivel: Titulo = 'h3', mostrarCategoria = false } = Astro.props;
+const { slug, nome, descricao, preco, foto, alt, selos, categoria } = prato;
+const busca = [nome, descricao, CATEGORIAS[categoria], ...selos.map((s) => SELOS[s].rotulo)]
+  .join(' ')
+  .toLowerCase();
+---
+
+<article
+  class="prato"
+  data-prato
+  data-categoria={categoria}
+  data-selos={selos.join(' ')}
+  data-busca={busca}
+  data-flip-id={slug}
+>
+  <div class="prato__inclinacao" data-inclinacao>
+    {
+      foto && (
+        <div class="prato__foto" data-revelar>
+          <Foto src={foto} alt={alt} sizes="(min-width: 80rem) 25vw, (min-width: 48rem) 45vw, 92vw" ver />
+          <span class="prato__brilho" aria-hidden="true" />
+        </div>
+      )
+    }
+    <div class="prato__corpo">
+      {mostrarCategoria && <p class="rotulo">{CATEGORIAS[categoria]}</p>}
+      <div class="prato__cabeca">
+        <Titulo class="prato__nome">
+          {nome}
+        </Titulo>
+        <p class="prato__preco">
+          <span aria-hidden="true">{formatarPreco(preco)}</span>
+          <span class="sr-only">{precoPorExtenso(preco)}</span>
+        </p>
+      </div>
+      <p class="prato__descricao">{descricao}</p>
+      {
+        selos.length > 0 && (
+          <ul role="list" class="prato__selos" aria-label="Selos">
+            {selos.map((s) => (
+              <li>
+                <Selo variante={SELOS[s].variante}>{SELOS[s].rotulo}</Selo>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+</article>
+
+<style>
+  .prato {
+    --rx: 0deg;
+    --ry: 0deg;
+    --luz-x: 50%;
+    --luz-y: 0%;
+    perspective: 900px;
+  }
+  .prato__inclinacao {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-sumi-700);
+    border-radius: var(--radius-cartao);
+    background: var(--color-sumi-800);
+    box-shadow: var(--shadow-cartao);
+    transform: rotateX(var(--rx)) rotateY(var(--ry));
+    transform-style: preserve-3d;
+    transition:
+      border-color 0.3s var(--ease-saida),
+      transform 0.5s var(--ease-saida);
+  }
+  .prato:hover .prato__inclinacao,
+  .prato:focus-within .prato__inclinacao {
+    border-color: var(--color-salmon-400);
+  }
+  .prato__foto {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--color-sumi-900);
+  }
+  .prato__foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .prato__brilho {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--luz-x) var(--luz-y), oklch(100% 0 0 / 0.14), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .prato:hover .prato__brilho {
+    opacity: 1;
+  }
+  .prato__corpo {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .prato__cabeca {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+  }
+  .prato__nome {
+    flex: 1 1 12rem;
+  }
+  .prato__nome {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.1;
+  }
+  .prato__preco {
+    flex: none;
+    font-weight: 700;
+    color: var(--color-gold-400);
+    white-space: nowrap;
+  }
+  .prato__descricao {
+    font-size: 0.9375rem;
+    color: var(--color-washi-300);
+  }
+  .prato__selos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.25rem 0 0;
+    padding: 0;
+  }
+</style>

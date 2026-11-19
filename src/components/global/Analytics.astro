@@ -1,0 +1,31 @@
+---
+/**
+ * Tags de marketing (GA4, Google Ads, Meta) e eventos de conversão.
+ * Carregadas depois que a página termina de abrir, para não pesar no carregamento.
+ * Só entram as que tiverem ID configurado nas variáveis de ambiente (.env.example).
+ */
+---
+
+<script>
+  import { carregarTags, ehEvento, rastrear } from '@/scripts/analytics';
+
+  const iniciar = () => {
+    const ocioso = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 1500));
+    ocioso(carregarTags, { timeout: 4000 });
+  };
+  if (document.readyState === 'complete') iniciar();
+  else window.addEventListener('load', iniciar, { once: true });
+
+  // Cliques em links/botões com data-evento viram eventos de conversão.
+  document.addEventListener(
+    'click',
+    (event) => {
+      const el = (event.target as Element | null)?.closest<HTMLElement>('a[data-evento], button[data-evento]');
+      const nome = el?.dataset.evento;
+      if (!el || !ehEvento(nome)) return;
+      const secao = el.closest('section[id], footer, header')?.id || el.closest('footer, header')?.tagName.toLowerCase();
+      rastrear(nome, { origem: secao });
+    },
+    { capture: true },
+  );
+</script>

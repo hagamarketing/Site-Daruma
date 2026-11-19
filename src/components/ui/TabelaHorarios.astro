@@ -1,0 +1,95 @@
+---
+import { horarios } from '@/data/horarios';
+import { DIAS, type Dia, formatarTurno, NOME_DIA } from '@/scripts/horarios';
+
+/** Horário completo da semana (segunda → domingo), destacando o almoço de domingo. */
+const ordem: Dia[] = [...DIAS.slice(1), 'domingo'];
+const hoje = new Date().toISOString().slice(0, 10);
+const excecoes = horarios.excecoes.filter((e) => e.data >= hoje).slice(0, 5);
+const fmtData = (iso: string) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
+---
+
+<table class="tabela-horarios">
+  <caption class="sr-only">Horário de funcionamento por dia da semana</caption>
+  <tbody>
+    {
+      ordem.map((dia) => {
+        const turnos = horarios.semana[dia];
+        return (
+          <tr data-dia={dia}>
+            <th scope="row">{NOME_DIA[dia].longo[0]?.toUpperCase() + NOME_DIA[dia].longo.slice(1)}</th>
+            <td>
+              {turnos.length === 0 ? (
+                <span class="fechado">Fechado</span>
+              ) : (
+                turnos.map((t) => (
+                  <span class:list={['turno', t.nome.toLowerCase().startsWith('almo') && 'turno--almoco']}>
+                    {t.nome} <strong>{formatarTurno(t)}</strong>
+                  </span>
+                ))
+              )}
+            </td>
+          </tr>
+        );
+      })
+    }
+  </tbody>
+</table>
+{
+  excecoes.length > 0 && (
+    <div class="excecoes">
+      <p class="rotulo">Datas especiais</p>
+      <ul role="list">
+        {excecoes.map((e) => (
+          <li>
+            <strong>{fmtData(e.data)}</strong> {e.observacao && `(${e.observacao})`}:{' '}
+            {e.status === 'fechado' ? 'fechado' : e.turnos.map(formatarTurno).join(' e ')}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+<style>
+  .tabela-horarios {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .tabela-horarios th,
+  .tabela-horarios td {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--color-sumi-700);
+    text-align: left;
+    vertical-align: top;
+  }
+  .tabela-horarios th {
+    width: 7.5rem;
+    font-weight: 600;
+  }
+  .tabela-horarios td {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    color: var(--color-washi-300);
+  }
+  .tabela-horarios strong {
+    color: var(--color-washi-50);
+    font-weight: 600;
+  }
+  .turno--almoco strong {
+    color: var(--color-salmon-400);
+  }
+  .fechado {
+    color: var(--color-daruma-400);
+  }
+  .excecoes {
+    margin-top: 1.5rem;
+    font-size: 0.9375rem;
+    color: var(--color-washi-300);
+  }
+  .excecoes ul {
+    margin: 0.5rem 0 0;
+    padding: 0;
+  }
+</style>

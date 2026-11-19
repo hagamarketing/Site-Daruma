@@ -1,0 +1,138 @@
+---
+import heroChef from '@/assets/fotos/hero-chef.jpg';
+import Foto from '@/components/ui/Foto.astro';
+import HeroVideo from '@/components/ui/HeroVideo.astro';
+import StatusBadge from '@/components/ui/StatusBadge.astro';
+import Botao from '@/components/ui/Botao.astro';
+import Kanji from '@/components/ui/Kanji.astro';
+import { horarios } from '@/data/horarios';
+import { formatarTurno } from '@/scripts/horarios';
+
+const almoco = horarios.semana.domingo.find((t) => t.nome.toLowerCase().startsWith('almo'));
+
+/**
+ * Vídeo do hero (opcional). Coloque o arquivo em public/video/ (MP4 H.264, sem áudio, ≤ 1,5 MB)
+ * e informe o caminho aqui, ex.: '/video/hero.mp4'. Ele só carrega depois da imagem de capa,
+ * nunca com economia de dados nem com movimento reduzido, e tem botão de pausa.
+ */
+const VIDEO_HERO: string | undefined = undefined;
+---
+
+<section class="hero" aria-labelledby="hero-titulo" data-hero data-motion="hero">
+  <div class="hero__midia" data-parallax="midia">
+    <Foto
+      src={heroChef}
+      alt="[PREENCHER] Chef do Daruma finalizando um temaki no balcão, sob luz baixa"
+      sizes="100vw"
+      larguras={[640, 960, 1280, 1600, 1920]}
+      prioridade
+      class="hero__foto"
+    />
+    <HeroVideo poster={heroChef.src} src={VIDEO_HERO} />
+    <div class="hero__veu" aria-hidden="true"></div>
+  </div>
+  <Kanji palavra="noite" class="hero__kanji" />
+
+  <div class="container-site hero__conteudo" data-parallax="conteudo">
+    <div class="hero__selos">
+      <StatusBadge />
+      {
+        almoco && (
+          <p class="hero__domingo" data-so-domingo data-horarios={JSON.stringify(horarios)} hidden>
+            <span>Novo:</span> almoço de domingo, {formatarTurno(almoco)}
+          </p>
+        )
+      }
+    </div>
+    <h1 id="hero-titulo" class="text-display hero__titulo" data-split>
+      Temaki, rolls e rodízio <em>na noite de Marília</em>
+    </h1>
+    <p class="hero__sub">
+      Japonês no Jardim Maria Izabel: rodízio ou à la carte, seis noites por semana. E agora, almoço de domingo.
+    </p>
+    <div class="hero__ctas">
+      <Botao href="#reservas" tamanho="grande" olho brilho magnetico>Reservar mesa</Botao>
+      <Botao href="#delivery" variante="secundario" tamanho="grande" magnetico>Pedir delivery</Botao>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    align-items: end;
+    min-height: max(36rem, 100svh);
+    overflow: clip;
+    isolation: isolate;
+  }
+  .hero__midia {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .hero__midia :global(.hero__foto),
+  .hero__midia :global(.hero__foto img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero__veu {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top, var(--color-sumi-950) 8%, oklch(16% 0.003 67.6 / 0.55) 55%, oklch(16% 0.003 67.6 / 0.2)),
+      linear-gradient(to right, oklch(16% 0.003 67.6 / 0.7), transparent 70%);
+  }
+  .hero :global(.hero__kanji) {
+    position: absolute;
+    top: 18%;
+    right: -3%;
+    z-index: -1;
+    opacity: 0.06;
+  }
+  .hero__conteudo {
+    padding-top: 8rem;
+    /* No celular, reserva o espaço da barra fixa inferior para ela não cobrir os botões. */
+    padding-bottom: calc(clamp(3rem, 2rem + 5vw, 6rem) + var(--altura-barra-mobile, 0px));
+  }
+  .hero__selos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .hero__domingo {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+    margin: 0;
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--radius-pilula);
+    background: var(--color-daruma-600);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+  .hero__domingo[hidden] {
+    display: none;
+  }
+  .hero__domingo span {
+    font-weight: 800;
+  }
+  .hero__titulo {
+    max-width: 13ch;
+    margin-top: 1.5rem;
+  }
+  .hero__sub {
+    max-width: 46ch;
+    margin-top: 1.5rem;
+    font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.3rem);
+    color: var(--color-washi-300);
+  }
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+  }
+</style>

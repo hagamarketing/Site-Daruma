@@ -1,0 +1,35 @@
+---
+import { JAPONES, type PalavraJaponesa } from '@/data/japones';
+
+/** Acento decorativo em japonês: grande, baixa opacidade, sem leitura por leitor de tela. */
+interface Props {
+  palavra: PalavraJaponesa;
+  vertical?: boolean;
+  class?: string;
+}
+const { palavra, vertical = false, class: classe } = Astro.props;
+---
+
+<!-- Texto via ::before: puramente decorativo, fora da árvore de acessibilidade e das checagens de contraste. -->
+<span class:list={['kanji', vertical && 'kanji--vertical', classe]} aria-hidden="true" lang="ja" data-texto={JAPONES[palavra]}
+></span>
+
+<style>
+  .kanji {
+    display: block;
+    font-family: var(--font-jp);
+    font-size: var(--text-jp);
+    line-height: 1;
+    color: var(--color-washi-50);
+    opacity: 0.05;
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .kanji::before {
+    content: attr(data-texto);
+  }
+  .kanji--vertical {
+    writing-mode: vertical-rl;
+  }
+</style>

@@ -1,0 +1,95 @@
+---
+/**
+ * Layout base: <head> (SEO, fontes), preloader, header, rodapé, barra fixa do celular e scripts globais.
+ */
+import type { ImageMetadata } from 'astro';
+import { Font } from 'astro:assets';
+import Analytics from '@/components/global/Analytics.astro';
+import Footer from '@/components/global/Footer.astro';
+import Header from '@/components/global/Header.astro';
+import MobileBar from '@/components/global/MobileBar.astro';
+import Seo from '@/components/global/Seo.astro';
+import SkipLink from '@/components/global/SkipLink.astro';
+import { site } from '@/data/site';
+import '@/styles/global.css';
+
+interface Props {
+  titulo?: string | undefined;
+  descricao?: string | undefined;
+  imagem?: ImageMetadata | undefined;
+  imagemAlt?: string | undefined;
+  noindex?: boolean | undefined;
+  jsonLd?: unknown[] | undefined;
+}
+
+const {
+  titulo = `${site.nome} | Restaurante japonês e rodízio em Marília`,
+  descricao = site.descricao,
+  imagem,
+  imagemAlt,
+  noindex,
+  jsonLd,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Marca JS ativo antes da primeira pintura: elementos só-JS reservam espaço sem layout shift. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <meta name="theme-color" content="#0E0D0C" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <Seo {titulo} {descricao} {imagem} {imagemAlt} {noindex} {jsonLd} />
+    <Font cssVariable="--font-instrument-serif" preload={[{ style: 'normal' }]} />
+    <Font cssVariable="--font-manrope" />
+    <Font cssVariable="--font-shippori" />
+    <slot name="head" />
+  </head>
+  <body class="grao">
+    <script is:inline>
+      (() => {
+        // Preloader: só na 1ª visita da sessão, sem movimento reduzido. Pulável (clique, toque ou tecla).
+        let visto = false;
+        try {
+          visto = sessionStorage.getItem('daruma:preloader') === '1';
+          sessionStorage.setItem('daruma:preloader', '1');
+        } catch {}
+        if (visto || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const raiz = document.documentElement;
+        raiz.dataset.preloader = 'ativo';
+        raiz.dataset.preloaderSessao = '';
+        const el = document.createElement('div');
+        el.className = 'preloader';
+        el.setAttribute('aria-hidden', 'true');
+        el.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle class="preloader__contorno" cx="12" cy="12" r="10" stroke-width="1" pathLength="1" transform="rotate(-90 12 12)"/><path class="preloader__pupila" d="M12 9.5a2.5 2.5 0 1 1 0 5a2.5 2.5 0 1 1 0 -5" stroke-width="5" pathLength="1"/></svg><span class="preloader__dica">toque para pular</span>';
+        const fim = () => {
+          if (!el.isConnected) return;
+          el.remove();
+          delete raiz.dataset.preloader;
+          dispatchEvent(new Event('daruma:preloader-fim'));
+        };
+        el.addEventListener('animationend', (e) => e.target === el && fim());
+        el.addEventListener('click', fim);
+        addEventListener('keydown', fim, { once: true });
+        setTimeout(fim, 1300);
+        document.body.prepend(el);
+      })();
+    </script>
+    <SkipLink />
+    <Header />
+    <main id="conteudo" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <MobileBar />
+    <Analytics />
+    <script>
+      import '@/scripts/motion/index';
+    </script>
+  </body>
+</html>

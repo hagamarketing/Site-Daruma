@@ -1,0 +1,185 @@
+---
+/**
+ * Reserva guiada pelo WhatsApp. Sem backend.
+ * - Sem JS: o formulário envia por GET para wa.me com uma mensagem-modelo editável (campo "text").
+ * - Com JS (src/scripts/reserva.ts): campos guiados; o horário só oferece opções válidas para o dia
+ *   (quarta fechado, almoço só no domingo, feriados de src/data/horarios.ts) e a mensagem é montada no envio.
+ */
+import { horarios } from '@/data/horarios';
+import { site } from '@/data/site';
+import { mensagens } from '@/data/site';
+import Daruma from '@/components/ui/Daruma.astro';
+import OlhoDaruma from '@/components/ui/OlhoDaruma.astro';
+
+interface Props {
+  ocasiaoPadrao?: string;
+  mensagemPadrao?: string;
+}
+const { ocasiaoPadrao = '', mensagemPadrao = mensagens.reserva } = Astro.props;
+const OCASIOES = ['Aniversário', 'Encontro', 'Família', 'Amigos', 'Trabalho', 'Comemoração'];
+---
+
+<form
+  class="reserva"
+  action={`https://wa.me/${site.whatsapp.numero}`}
+  method="get"
+  target="_blank"
+  data-reserva
+  data-horarios={JSON.stringify(horarios)}
+  data-motion="reserva"
+>
+  <div class="reserva__simples" data-modo-simples>
+    <label for="reserva-texto">Escreva sua reserva</label>
+    <p class="reserva__ajuda" id="reserva-texto-ajuda">
+      Complete data, horário e número de pessoas. A mensagem abre no WhatsApp para você enviar.
+    </p>
+    <textarea id="reserva-texto" name="text" rows="6" aria-describedby="reserva-texto-ajuda">{mensagemPadrao}</textarea>
+  </div>
+
+  <fieldset class="reserva__guiado" data-modo-guiado hidden disabled>
+    <legend class="sr-only">Dados da reserva</legend>
+    <div class="campo">
+      <label for="reserva-data">Data</label>
+      <input id="reserva-data" type="date" required data-campo="data" />
+      <p class="campo__erro" data-erro="data" role="alert"></p>
+    </div>
+    <div class="campo">
+      <label for="reserva-horario">Horário</label>
+      <select id="reserva-horario" required data-campo="horario" aria-describedby="reserva-horario-ajuda">
+        <option value="">Escolha a data primeiro</option>
+      </select>
+      <p class="reserva__ajuda" id="reserva-horario-ajuda" data-ajuda-horario>
+        Jantar todos os dias, menos quarta. Almoço só no domingo.
+      </p>
+    </div>
+    <div class="campo">
+      <label for="reserva-pessoas">Pessoas</label>
+      <input id="reserva-pessoas" type="number" inputmode="numeric" min="1" max="60" value="2" required data-campo="pessoas" />
+    </div>
+    <div class="campo">
+      <label for="reserva-ocasiao">Ocasião <span class="opcional">(opcional)</span></label>
+      <input id="reserva-ocasiao" list="reserva-ocasioes" value={ocasiaoPadrao} data-campo="ocasiao" autocomplete="off" />
+      <datalist id="reserva-ocasioes">{OCASIOES.map((o) => <option value={o} />)}</datalist>
+    </div>
+    <div class="campo campo--largo">
+      <label for="reserva-obs">Observação <span class="opcional">(opcional)</span></label>
+      <input id="reserva-obs" data-campo="observacao" maxlength="200" placeholder="Ex.: cadeira para bebê" autocomplete="off" />
+    </div>
+  </fieldset>
+
+  <div class="reserva__envio">
+    <button type="submit" class="btn btn-primario btn-grande btn-brilho" data-magnetico>
+      <OlhoDaruma pintado={false} class="reserva__olho" />
+      <span>Reservar pelo WhatsApp</span>
+    </button>
+    <p class="reserva__ajuda">
+      Abre o WhatsApp {site.whatsapp.exibicao} com a mensagem pronta. A reserva é confirmada pela equipe.
+    </p>
+  </div>
+
+  <div class="reserva__confirmacao" data-confirmacao hidden aria-live="polite">
+    <Daruma olhos="um" class="reserva__daruma" />
+    <p>Desejo anotado. Conclua o envio no WhatsApp.</p>
+  </div>
+</form>
+
+<script>
+  import '@/scripts/reserva';
+</script>
+
+<style>
+  .reserva {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .reserva__guiado {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .reserva__guiado[hidden] {
+    display: none;
+  }
+  @media (min-width: 40rem) {
+    .reserva__guiado {
+      grid-template-columns: 1fr 1fr;
+    }
+    .campo--largo {
+      grid-column: 1 / -1;
+    }
+  }
+  .campo,
+  .reserva__simples {
+    display: grid;
+    gap: 0.4rem;
+  }
+  label {
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+  .opcional {
+    font-weight: 400;
+    color: var(--color-washi-300);
+  }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--color-sumi-600);
+    border-radius: 0.75rem;
+    background: var(--color-sumi-900);
+    color: var(--color-washi-50);
+    font: inherit;
+    color-scheme: dark;
+  }
+  textarea {
+    resize: vertical;
+    line-height: 1.5;
+  }
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    border-color: var(--color-gold-400);
+  }
+  input[aria-invalid='true'],
+  select[aria-invalid='true'] {
+    border-color: var(--color-daruma-400);
+  }
+  .reserva__ajuda {
+    font-size: 0.8125rem;
+    color: var(--color-washi-300);
+  }
+  .campo__erro {
+    min-height: 0;
+    font-size: 0.8125rem;
+    color: var(--color-daruma-400);
+  }
+  .campo__erro:empty {
+    display: none;
+  }
+  .reserva__envio {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+  }
+  .reserva__confirmacao {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--color-sumi-700);
+    border-radius: var(--radius-cartao);
+  }
+  .reserva__confirmacao[hidden] {
+    display: none;
+  }
+  .reserva :global(.reserva__daruma) {
+    width: 3.5rem;
+    flex: none;
+  }
+</style>
