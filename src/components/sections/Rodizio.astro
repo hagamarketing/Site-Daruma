@@ -126,24 +126,62 @@ const total = String(lista.length).padStart(2, '0');
     margin-top: 0.5rem;
     color: var(--color-washi-300);
   }
-  /* Modo fixo (JS): a rolagem vertical move o trilho; nada de rolagem nativa. */
+  /*
+   * Modo fixo (JS, desktop/tablet): a seção ocupa exatamente a altura da tela e a rolagem vertical
+   * move o trilho. Título, cards e botão dividem a altura; a foto se ajusta ao espaço que sobra
+   * (unidades de contêiner), então os cards nunca ficam cortados em telas baixas (ex.: 1366×768).
+   */
+  .rodizio:global(.rodizio--fixo) {
+    --texto-etapa: 8.75rem;
+    --foto-etapa: min(calc(100cqh - var(--texto-etapa)), 32rem);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100svh;
+    padding-block: 5.75rem 1.25rem;
+  }
+  .rodizio:global(.rodizio--fixo) .rodizio__cabeca :global(.secao-titulo) {
+    gap: 0.5rem;
+    margin-bottom: clamp(1rem, 3svh, 2rem);
+  }
+  .rodizio:global(.rodizio--fixo) .rodizio__contador {
+    margin-bottom: clamp(1rem, 3svh, 2rem);
+    font-size: clamp(2.5rem, 7svh, 5rem);
+  }
   .rodizio:global(.rodizio--fixo) .rodizio__janela {
+    container-type: size;
+    height: 100%;
+    min-height: 0;
     overflow: hidden;
     padding-bottom: 0;
   }
-  .rodizio:global(.rodizio--fixo) {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 100svh;
-    padding-block: 6rem 3rem;
+  .rodizio:global(.rodizio--fixo) .rodizio__trilho {
+    height: 100%;
   }
   .rodizio:global(.rodizio--fixo) .etapa {
-    width: min(34vw, 24rem);
+    align-content: start;
+    gap: 1rem;
+    width: calc(var(--foto-etapa) * 0.8);
+    min-width: 11rem;
   }
   .rodizio:global(.rodizio--fixo) .etapa__foto {
-    aspect-ratio: 4 / 4.2;
-    max-height: 52svh;
+    height: var(--foto-etapa);
+    aspect-ratio: auto;
+  }
+  .rodizio:global(.rodizio--fixo) .etapa__texto p:last-child {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+  .rodizio:global(.rodizio--fixo) .rodizio__rodape {
+    margin-top: clamp(0.75rem, 2svh, 1.5rem);
+  }
+  /* Telas muito baixas: esconde a introdução para sobrar espaço para os cards. */
+  @media (max-height: 800px) {
+    .rodizio:global(.rodizio--fixo) .rodizio__cabeca :global(.secao-titulo__intro) {
+      display: none;
+    }
   }
   /* Movimento reduzido: lista vertical. */
   @media (prefers-reduced-motion: reduce) {
