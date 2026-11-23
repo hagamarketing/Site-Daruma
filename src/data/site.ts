@@ -27,6 +27,7 @@ export const site = {
 
   links: {
     ifood: 'https://www.ifood.com.br/delivery/marilia-sp/daruma-temaki-rolls-ltda-jardim-maria-izabel/c8da849f-f89d-477a-a1e7-6502fc91b2b4',
+    food99: 'https://oia.99app.com/dlp9/0Nynmk',
     avaliarGoogle: 'https://g.page/r/Cf3TMwyyi96QEAE/review',
     instagram: 'https://www.instagram.com/darumatemakirollsmarilia/',
     facebook: 'https://www.facebook.com/darumatemakierollsmarilia/',

@@ -3,7 +3,7 @@
  * IDs vêm das variáveis de ambiente (veja .env.example), validados em ./env.ts.
  *
  * Eventos (mesmos nomes no GA4 e no Meta):
- *   reserva_whatsapp, delivery_whatsapp, delivery_ifood, ligacao, rota, avaliar_google, ver_cardapio
+ *   reserva_whatsapp, delivery_whatsapp, delivery_ifood, delivery_99food, ligacao, rota, avaliar_google, ver_cardapio
  * Qualquer link ou botão com data-evento="<nome>" dispara o evento no clique.
  * Nunca envia dados pessoais (nem o texto da mensagem do WhatsApp).
  */
@@ -25,6 +25,7 @@ export const EVENTOS = [
   'reserva_whatsapp',
   'delivery_whatsapp',
   'delivery_ifood',
+  'delivery_99food',
   'ligacao',
   'rota',
   'avaliar_google',
@@ -87,7 +88,7 @@ export function rastrear(evento: Evento, parametros: Record<string, string | num
   if (evento === 'reserva_whatsapp') {
     conversaoAds(GADS_LABEL_RESERVA);
     window.fbq?.('track', 'Contact', { content_name: evento });
-  } else if (evento === 'delivery_whatsapp' || evento === 'delivery_ifood') {
+  } else if (evento === 'delivery_whatsapp' || evento === 'delivery_ifood' || evento === 'delivery_99food') {
     conversaoAds(GADS_LABEL_DELIVERY);
     window.fbq?.('track', 'Lead', { content_name: evento });
   } else {

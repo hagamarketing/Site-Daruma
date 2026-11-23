@@ -44,12 +44,10 @@ const VIDEO_HERO: string | undefined = undefined;
         )
       }
     </div>
-    <h1 id="hero-titulo" class="text-display hero__titulo" data-split>
-      Temaki, rolls e rodízio <em>na noite de Marília</em>
+    <h1 id="hero-titulo" class="hero__titulo" data-split>
+      O melhor da cozinha oriental em Marília <em>você encontra aqui!</em>
     </h1>
-    <p class="hero__sub">
-      Japonês no Jardim Maria Izabel: rodízio ou à la carte, seis noites por semana. E agora, almoço de domingo.
-    </p>
+    <p class="hero__sub">Descubra a fusão perfeita entre tradição japonesa e frescor brasileiro em cada prato.</p>
     <div class="hero__ctas">
       <Botao href="#reservas" tamanho="grande" olho brilho magnetico>Reservar mesa</Botao>
       <Botao href="#delivery" variante="secundario" tamanho="grande" magnetico>Pedir delivery</Botao>
@@ -120,8 +118,11 @@ const VIDEO_HERO: string | undefined = undefined;
     font-weight: 800;
   }
   .hero__titulo {
-    max-width: 13ch;
+    max-width: 18ch;
     margin-top: 1.5rem;
+    font-size: clamp(2.5rem, 1.4rem + 4.6vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
   }
   .hero__sub {
     max-width: 46ch;

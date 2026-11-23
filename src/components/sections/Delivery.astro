@@ -16,7 +16,7 @@ const whats = linkWhatsApp(mensagens.delivery);
   <div class="container-site">
     <SecaoTitulo id="delivery-titulo" rotulo="Delivery">
       O Daruma <em>na sua mesa de casa</em>
-      <p slot="intro">Dois jeitos de pedir. Escolha o seu.</p>
+      <p slot="intro">Três jeitos de pedir. Escolha o seu.</p>
     </SecaoTitulo>
     <StatusBadge />
   </div>
@@ -34,6 +34,13 @@ const whats = linkWhatsApp(mensagens.delivery);
       <p>Cardápio completo no aplicativo, com pagamento e acompanhamento do pedido por lá.</p>
       <p class="canal__info">{delivery.infoIfood}</p>
       <Botao href={ifood} evento="delivery_ifood" variante="secundario" tamanho="grande">Pedir no iFood</Botao>
+    </Cartao>
+    <Cartao as="article" class="canal">
+      <Icone nome="sacola" tamanho={32} />
+      <h3 class="text-subtitulo">No 99Food</h3>
+      <p>Peça pelo aplicativo da 99, com pagamento e acompanhamento do pedido por lá.</p>
+      <p class="canal__info">{delivery.info99Food}</p>
+      <Botao href={links.food99} evento="delivery_99food" variante="secundario" tamanho="grande">Pedir no 99Food</Botao>
     </Cartao>
   </div>
 
@@ -54,7 +61,7 @@ const whats = linkWhatsApp(mensagens.delivery);
   }
   @media (min-width: 56rem) {
     .canais {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
     }
   }
   .canais :global(.canal) {

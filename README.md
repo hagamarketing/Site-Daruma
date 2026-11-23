@@ -1,6 +1,6 @@
 # Daruma Temaki e Rolls: site
 
-Site do restaurante japonês **Daruma Temaki e Rolls** (Rua Pedro Preti, 6, Jardim Maria Izabel, Marília-SP), feito para levar o visitante a reservar pelo WhatsApp, pedir delivery (WhatsApp ou iFood), ligar ou traçar a rota.
+Site do restaurante japonês **Daruma Temaki e Rolls** (Rua Pedro Preti, 6, Jardim Maria Izabel, Marília-SP), feito para levar o visitante a reservar pelo WhatsApp, pedir delivery (WhatsApp, iFood ou 99Food), ligar ou traçar a rota.
 
 - **Astro 7** (site 100% estático) + **Tailwind CSS v4** (`@tailwindcss/vite`, tokens em `@theme`)
 - **GSAP 3.15** (ScrollTrigger, SplitText, Flip, DrawSVG, MorphSVG, Draggable, Inertia, CustomEase), carregado sob demanda só nas seções que animam
@@ -31,18 +31,18 @@ Todo o conteúdo fica em **`src/data/`**. Dá para editar sem mexer no layout:
 
 | Arquivo | O que tem |
 | --- | --- |
-| `site.ts` | Nome, endereço, coordenadas, **telefone**, **WhatsApp**, links (iFood, Instagram, Facebook, avaliar no Google), faixa de preço, aviso no topo, razão social e CNPJ, mensagens do WhatsApp, menu |
+| `site.ts` | Nome, endereço, coordenadas, **telefone**, **WhatsApp**, links (iFood, 99Food, Instagram, Facebook, avaliar no Google), faixa de preço, aviso no topo, razão social e CNPJ, mensagens do WhatsApp, menu |
 | `horarios.ts` | **Horário de funcionamento** (única fonte: selo "Aberto agora", rodapé, reservas, contato e Google) e **feriados** |
 | `cardapio.ts` | Categorias, selos e **pratos** (nome, descrição, preço, foto, selos) |
-| `rodizio.ts` | Modalidades do rodízio (o que inclui, **preços por dia e turno**, regras) e as fotos do carrossel do rodízio |
-| `delivery.ts` | Texto do delivery próprio (área, taxa, tempo) |
+| `rodizio.ts` | Fotos do carrossel do rodízio |
+| `delivery.ts` | Textos do delivery próprio (área, taxa, tempo), do iFood e do 99Food |
 | `galeria.ts` | Fotos da galeria e da grade do Instagram |
 | `faq.ts` | Perguntas frequentes (também viram dados estruturados para o Google) |
 | `japones.ts` | Palavras em japonês usadas como textura (だるま, 手巻き…) |
 
 Outros pontos:
 
-- **Textos das seções** (título do hero, rodízio, reservas, história do Daruma): no próprio arquivo da seção, em `src/components/sections/`.
+- **Textos das seções** (frase de abertura do topo, rodízio, reservas, história do Daruma): no próprio arquivo da seção, em `src/components/sections/`.
 - **Horários:** cada dia tem uma lista de turnos; dia sem turno é dia fechado. Turno que passa da meia-noite: use o fechamento do dia seguinte (ex.: `fecha: '00:30'`). Feriado: adicione em `excecoes` com `status: 'fechado'` ou `'especial'`.
 - **Preço vazio** (`null`) aparece como "R$ [PREENCHER]".
 - **Cores e fontes:** em `src/styles/global.css`, bloco `@theme`. O vermelho dos botões é `--color-daruma-600`; para texto vermelho sobre fundo escuro use `daruma-400` (o 600 não passa no contraste AA como texto).
@@ -54,7 +54,7 @@ Procure por `[PREENCHER]` no projeto para achar tudo que ainda precisa ser preen
 grep -rn "\[PREENCHER\]" src
 ```
 
-Hoje faltam: **preços do rodízio**, **pratos reais** (os 9 atuais são exemplos, um por categoria), regras de crianças e desperdício, área e taxa do delivery, oferta do almoço de domingo, estacionamento e formas de pagamento, razão social, CNPJ e e-mail do encarregado de dados, e os textos alternativos das fotos.
+Hoje faltam: **pratos reais** (os 9 atuais são exemplos, um por categoria), regra de crianças no rodízio (FAQ), área e taxa do delivery, oferta do almoço de domingo, estacionamento e formas de pagamento, razão social, CNPJ e e-mail do encarregado de dados, e os textos alternativos das fotos.
 
 ---
 
@@ -95,13 +95,13 @@ Os IDs ficam em variáveis de ambiente (veja `.env.example`). Para rodar localme
 | `PUBLIC_GA4_ID` | Google Analytics 4 (`G-XXXXXXX`) |
 | `PUBLIC_GADS_ID` | Conta do Google Ads (`AW-XXXXXXXX`) |
 | `PUBLIC_GADS_LABEL_RESERVA` | Rótulo da conversão "reserva pelo WhatsApp" |
-| `PUBLIC_GADS_LABEL_DELIVERY` | Rótulo da conversão "pedido de delivery" (WhatsApp ou iFood) |
+| `PUBLIC_GADS_LABEL_DELIVERY` | Rótulo da conversão "pedido de delivery" (WhatsApp, iFood ou 99Food) |
 | `PUBLIC_META_PIXEL_ID` | Pixel do Meta |
 
 - **Carregamento:** as tags entram depois que a página termina de abrir, para não pesar no carregamento (`src/components/global/Analytics.astro`). O site não exibe aviso de cookies; o uso está descrito na política de privacidade (`/privacidade`).
-- **Eventos** (mesmo nome no GA4): `reserva_whatsapp`, `delivery_whatsapp`, `delivery_ifood`, `ligacao`, `rota`, `avaliar_google`, `ver_cardapio`. Qualquer link ou botão com `data-evento="<nome>"` dispara o evento; o formulário de reserva dispara `reserva_whatsapp` no envio. Reserva vira `Contact` no Meta e conversão de reserva no Ads; delivery vira `Lead` e conversão de delivery.
+- **Eventos** (mesmo nome no GA4): `reserva_whatsapp`, `delivery_whatsapp`, `delivery_ifood`, `delivery_99food`, `ligacao`, `rota`, `avaliar_google`, `ver_cardapio`. Qualquer link ou botão com `data-evento="<nome>"` dispara o evento; o formulário de reserva dispara `reserva_whatsapp` no envio. Reserva vira `Contact` no Meta e conversão de reserva no Ads; delivery vira `Lead` e conversão de delivery.
 - Nenhum dado pessoal é enviado (nem o texto da mensagem do WhatsApp).
-- Marque `reserva_whatsapp`, `delivery_whatsapp` e `delivery_ifood` como **eventos-chave** no GA4.
+- Marque `reserva_whatsapp`, `delivery_whatsapp`, `delivery_ifood` e `delivery_99food` como **eventos-chave** no GA4.
 
 ---
 
