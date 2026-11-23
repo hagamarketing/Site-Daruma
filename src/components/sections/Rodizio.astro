@@ -157,13 +157,14 @@ const total = String(lista.length).padStart(2, '0');
   .rodizio:global(.rodizio--fixo) .rodizio__trilho {
     height: 100%;
   }
+  /* Largura pela tela (não pela altura): garante percurso horizontal de verdade em qualquer notebook. */
   .rodizio:global(.rodizio--fixo) .etapa {
     align-content: start;
     gap: 1rem;
-    width: calc(var(--foto-etapa) * 0.8);
-    min-width: 11rem;
+    width: clamp(17rem, 32vw, 30rem);
   }
   .rodizio:global(.rodizio--fixo) .etapa__foto {
+    width: 100%;
     height: var(--foto-etapa);
     aspect-ratio: auto;
   }

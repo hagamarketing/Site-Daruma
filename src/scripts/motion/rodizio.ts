@@ -24,6 +24,13 @@ export function iniciar(): void {
     secao.classList.add('rodizio--fixo');
     const distancia = () => Math.max(0, trilho.scrollWidth - janela.clientWidth);
 
+    // Sem percurso horizontal suficiente (tela muito larga para os cards), não fixa a seção:
+    // fica o carrossel nativo de arrastar, em vez de uma tela "parada".
+    if (distancia() < window.innerWidth * 0.25) {
+      secao.classList.remove('rodizio--fixo');
+      return;
+    }
+
     const horizontal = gsap.to(trilho, {
       x: () => -distancia(),
       ease: 'none',
