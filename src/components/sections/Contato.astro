@@ -2,7 +2,6 @@
 import MapaEstilizado from '@/components/ui/MapaEstilizado.astro';
 import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
 import StatusBadge from '@/components/ui/StatusBadge.astro';
-import TabelaHorarios from '@/components/ui/TabelaHorarios.astro';
 import Botao from '@/components/ui/Botao.astro';
 import Icone from '@/components/ui/Icone.astro';
 import Perguntas from '@/components/ui/Perguntas.astro';
@@ -35,7 +34,6 @@ const titulo = endereco.rua;
           <Icone nome="telefone" tamanho={18} /> {site.telefone.exibicao}
         </Botao>
       </div>
-      <TabelaHorarios />
     </div>
     <MapaEstilizado />
   </div>
@@ -85,8 +83,5 @@ const titulo = endereco.rua;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-  }
-  .local__info :global(.tabela-horarios) {
-    margin-top: 0.5rem;
   }
 </style>

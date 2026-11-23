@@ -8,7 +8,7 @@ Site do restaurante japonês **Daruma Temaki e Rolls** (Rua Pedro Preti, 6, Jard
 - CSS moderno: scroll-driven animations, View Transitions entre páginas, `@starting-style`, `@property`, anchor positioning, sempre com fallback
 - TypeScript estrito · hospedagem na **Hostinger** (`.htaccess` gerado no build)
 
-Páginas: **home** (página longa com rodízio, almoço de domingo, destaques, delivery, reservas, avaliações, história, galeria, Instagram e contato), **/cardapio**, **/privacidade** e **404**.
+Páginas: **home** (página longa com rodízio, almoço de domingo, delivery, reservas, história, galeria, Instagram e contato), **/cardapio**, **/privacidade** e **404**.
 
 ---
 
@@ -31,19 +31,18 @@ Todo o conteúdo fica em **`src/data/`**. Dá para editar sem mexer no layout:
 
 | Arquivo | O que tem |
 | --- | --- |
-| `site.ts` | Nome, endereço, coordenadas, **telefone**, **WhatsApp**, links (iFood, Instagram, Facebook, avaliar no Google), **nota e nº de avaliações do Google**, faixa de preço, aviso no topo, razão social e CNPJ, mensagens do WhatsApp, menu |
+| `site.ts` | Nome, endereço, coordenadas, **telefone**, **WhatsApp**, links (iFood, Instagram, Facebook, avaliar no Google), faixa de preço, aviso no topo, razão social e CNPJ, mensagens do WhatsApp, menu |
 | `horarios.ts` | **Horário de funcionamento** (única fonte: selo "Aberto agora", rodapé, reservas, contato e Google) e **feriados** |
-| `cardapio.ts` | Categorias, selos e **pratos** (nome, descrição, preço, foto, selos, destaque na home) |
-| `rodizio.ts` | Modalidades do rodízio (o que inclui, **preços por dia e turno**, regras) e as 5 etapas |
-| `delivery.ts` | Texto do delivery próprio (área, taxa, tempo) e **combos** |
-| `depoimentos.ts` | Depoimentos copiados do Google |
+| `cardapio.ts` | Categorias, selos e **pratos** (nome, descrição, preço, foto, selos) |
+| `rodizio.ts` | Modalidades do rodízio (o que inclui, **preços por dia e turno**, regras) e as fotos do carrossel do rodízio |
+| `delivery.ts` | Texto do delivery próprio (área, taxa, tempo) |
 | `galeria.ts` | Fotos da galeria e da grade do Instagram |
 | `faq.ts` | Perguntas frequentes (também viram dados estruturados para o Google) |
 | `japones.ts` | Palavras em japonês usadas como textura (だるま, 手巻き…) |
 
 Outros pontos:
 
-- **Textos das seções** (título do hero, história do Daruma, grupos e aniversários): no próprio arquivo da seção, em `src/components/sections/`.
+- **Textos das seções** (título do hero, rodízio, reservas, história do Daruma): no próprio arquivo da seção, em `src/components/sections/`.
 - **Horários:** cada dia tem uma lista de turnos; dia sem turno é dia fechado. Turno que passa da meia-noite: use o fechamento do dia seguinte (ex.: `fecha: '00:30'`). Feriado: adicione em `excecoes` com `status: 'fechado'` ou `'especial'`.
 - **Preço vazio** (`null`) aparece como "R$ [PREENCHER]".
 - **Cores e fontes:** em `src/styles/global.css`, bloco `@theme`. O vermelho dos botões é `--color-daruma-600`; para texto vermelho sobre fundo escuro use `daruma-400` (o 600 não passa no contraste AA como texto).
@@ -55,7 +54,7 @@ Procure por `[PREENCHER]` no projeto para achar tudo que ainda precisa ser preen
 grep -rn "\[PREENCHER\]" src
 ```
 
-Hoje faltam: **preços do rodízio**, **pratos reais** (os 9 atuais são exemplos, um por categoria), **combos**, **depoimentos**, regras de crianças, desperdício e grupos, área e taxa do delivery, oferta do almoço de domingo, história da casa, estacionamento e formas de pagamento, razão social, CNPJ e e-mail do encarregado de dados, e os textos alternativos das fotos.
+Hoje faltam: **preços do rodízio**, **pratos reais** (os 9 atuais são exemplos, um por categoria), regras de crianças e desperdício, área e taxa do delivery, oferta do almoço de domingo, estacionamento e formas de pagamento, razão social, CNPJ e e-mail do encarregado de dados, e os textos alternativos das fotos.
 
 ---
 
@@ -69,8 +68,7 @@ Hoje todas as fotos são **provisórias**: fundos escuros com o contorno do Daru
 | Almoço de domingo | `src/assets/fotos/almoco-domingo.jpg` | 16:10, 1600 × 1000 |
 | Compartilhamento (WhatsApp, Facebook) | `src/assets/fotos/og-padrao.jpg` | 1200 × 630 |
 | Pratos | `src/assets/fotos/pratos/<slug>/foto.jpg` | 3:2, 1200 × 800 |
-| Etapas do rodízio | `src/assets/fotos/rodizio/<etapa>/foto.jpg` | 4:5, 1200 × 1500 |
-| Combos | `src/assets/fotos/combos/<slug>/foto.jpg` | 3:2, 1200 × 800 |
+| Carrossel do rodízio | `src/assets/fotos/rodizio/<etapa>/foto.jpg` | 4:5, 1200 × 1500 |
 | Galeria | `src/assets/fotos/galeria/<foto-n>/foto.jpg` | livre (a grade se ajusta) |
 | Grade do Instagram | `src/assets/fotos/instagram/<post-n>/foto.jpg` | 1:1, 800 × 800 |
 
@@ -160,7 +158,7 @@ O site atual está no Hostinger AI Builder. Na troca:
 
 ```
 src/
-  data/          conteúdo editável (dados da casa, horários, cardápio, rodízio, delivery, depoimentos, galeria, FAQ)
+  data/          conteúdo editável (dados da casa, horários, cardápio, rodízio, delivery, galeria, FAQ)
   assets/        fotos (provisórias) e fontes auto-hospedadas (Instrument Serif, Manrope, Shippori Mincho)
   layouts/       Base.astro (SEO, preloader, menu, rodapé, barra do celular, scripts globais)
   components/

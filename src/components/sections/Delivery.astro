@@ -1,14 +1,12 @@
 ---
-/** Delivery: dois caminhos (WhatsApp próprio e iFood com UTM) e combos (src/data/delivery.ts). */
+/** Delivery: dois caminhos (WhatsApp próprio e iFood com UTM). Textos em src/data/delivery.ts. */
 import Botao from '@/components/ui/Botao.astro';
 import Cartao from '@/components/ui/Cartao.astro';
-import Foto from '@/components/ui/Foto.astro';
 import Icone from '@/components/ui/Icone.astro';
 import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
 import StatusBadge from '@/components/ui/StatusBadge.astro';
-import { combos, delivery } from '@/data/delivery';
+import { delivery } from '@/data/delivery';
 import { comUtm, linkWhatsApp, links, mensagens } from '@/data/site';
-import { formatarPreco, precoPorExtenso } from '@/scripts/formatar';
 
 const ifood = comUtm(links.ifood, 'site', 'delivery', 'home');
 const whats = linkWhatsApp(mensagens.delivery);
@@ -39,50 +37,6 @@ const whats = linkWhatsApp(mensagens.delivery);
     </Cartao>
   </div>
 
-  {
-    combos.length > 0 && (
-      <div class="container-site combos">
-        <h3 class="text-subtitulo combos__titulo">Combos para dividir <em>(ou não)</em></h3>
-        <ul role="list" class="combos__grade">
-          {combos.map((c) => (
-            <li>
-              <Cartao as="article" class="combo">
-                <div class="combo__foto">
-                  <Foto src={c.foto} alt={c.alt} sizes="(min-width: 64rem) 30vw, 92vw" larguras={[400, 640, 960]} />
-                </div>
-                <div class="combo__corpo">
-                  <div class="combo__cabeca">
-                    <h4 class="text-subtitulo">{c.nome}</h4>
-                    <p class="combo__preco">
-                      <span aria-hidden="true">{formatarPreco(c.preco)}</span>
-                      <span class="sr-only">{precoPorExtenso(c.preco)}</span>
-                    </p>
-                  </div>
-                  {c.serve && <p class="rotulo">Serve {c.serve}</p>}
-                  <p>{c.descricao}</p>
-                  {c.itens.length > 0 && (
-                    <ul class="combo__itens">
-                      {c.itens.map((i) => (
-                        <li>{i}</li>
-                      ))}
-                    </ul>
-                  )}
-                  <Botao
-                    href={linkWhatsApp(`Olá! Quero pedir o ${c.nome}.`)}
-                    evento="delivery_whatsapp"
-                    variante="secundario"
-                    tamanho="pequeno"
-                  >
-                    Pedir este combo
-                  </Botao>
-                </div>
-              </Cartao>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )
-  }
 </section>
 
 
@@ -97,9 +51,6 @@ const whats = linkWhatsApp(mensagens.delivery);
     display: grid;
     gap: 1.5rem;
     padding-bottom: 3rem;
-  }
-  .combos__titulo {
-    margin-bottom: 1.5rem;
   }
   @media (min-width: 56rem) {
     .canais {
@@ -126,53 +77,4 @@ const whats = linkWhatsApp(mensagens.delivery);
     font-size: 0.875rem;
   }
 
-  .combos__grade {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
-    gap: 1.5rem;
-    margin: 0;
-    padding: 0;
-  }
-  .combos__grade > li,
-  .combos__grade :global(.combo) {
-    display: grid;
-    height: 100%;
-    overflow: hidden;
-  }
-  .combo__foto {
-    aspect-ratio: 3 / 2;
-    overflow: hidden;
-  }
-  .combo__foto :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .combo__corpo {
-    display: grid;
-    gap: 0.75rem;
-    justify-items: start;
-    padding: 1.5rem;
-    color: var(--color-washi-300);
-  }
-  .combo__cabeca {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    width: 100%;
-    color: var(--color-washi-50);
-  }
-  .combo__cabeca h4 {
-    font-family: var(--font-display);
-    font-weight: 400;
-  }
-  .combo__preco {
-    font-weight: 700;
-    color: var(--color-gold-400);
-    white-space: nowrap;
-  }
-  .combo__itens {
-    padding-left: 1.2rem;
-  }
 </style>

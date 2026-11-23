@@ -1,5 +1,5 @@
 /**
- * Cardápio à la carte. Cada prato aparece em /cardapio (e os marcados com `destaque` na home).
+ * Cardápio à la carte, mostrado em /cardapio.
  * Preço vazio (null) aparece como "R$ [PREENCHER]". Procure "[PREENCHER]" para ver o que falta.
  * Foto: coloque o arquivo em src/assets/fotos/pratos/<slug>/foto.jpg (3:2, mínimo 1200×800).
  */
@@ -46,8 +46,6 @@ export interface Prato {
   foto?: ImageMetadata;
   alt: string;
   selos: SeloPrato[];
-  /** Aparece entre os destaques da home (até 6). */
-  destaque: boolean;
 }
 
 export const pratos: Prato[] = [
@@ -60,7 +58,6 @@ export const pratos: Prato[] = [
     foto: fotoExemploEntradas,
     alt: '[PREENCHER] Foto do prato de exemplo da categoria entrada',
     selos: [],
-    destaque: true,
   },
   {
     slug: 'exemplo-temakis',
@@ -71,7 +68,6 @@ export const pratos: Prato[] = [
     foto: fotoExemploTemakis,
     alt: '[PREENCHER] Foto do prato de exemplo da categoria temaki',
     selos: ['mais-pedido'],
-    destaque: true,
   },
   {
     slug: 'exemplo-rolls',
@@ -82,7 +78,6 @@ export const pratos: Prato[] = [
     foto: fotoExemploRolls,
     alt: '[PREENCHER] Foto do prato de exemplo da categoria roll',
     selos: [],
-    destaque: true,
   },
   {
     slug: 'exemplo-combinados',
@@ -93,7 +88,6 @@ export const pratos: Prato[] = [
     foto: fotoExemploCombinados,
     alt: '[PREENCHER] Foto do prato de exemplo da categoria combinado',
     selos: [],
-    destaque: true,
   },
   {
     slug: 'exemplo-hot-rolls',
@@ -104,7 +98,6 @@ export const pratos: Prato[] = [
     foto: fotoExemploHotRolls,
     alt: '[PREENCHER] Foto do prato de exemplo da categoria hot roll',
     selos: ['novo'],
-    destaque: true,
   },
   {
     slug: 'exemplo-sashimis',
@@ -115,7 +108,6 @@ export const pratos: Prato[] = [
     foto: fotoExemploSashimis,
     alt: '[PREENCHER] Foto do prato de exemplo da categoria sashimi',
     selos: [],
-    destaque: true,
   },
   {
     slug: 'exemplo-quentes',
@@ -126,7 +118,6 @@ export const pratos: Prato[] = [
     foto: fotoExemploQuentes,
     alt: '[PREENCHER] Foto do prato de exemplo da categoria prato quente',
     selos: ['picante'],
-    destaque: false,
   },
   {
     slug: 'exemplo-bebidas',
@@ -137,7 +128,6 @@ export const pratos: Prato[] = [
     foto: fotoExemploBebidas,
     alt: '[PREENCHER] Foto do prato de exemplo da categoria bebida',
     selos: [],
-    destaque: false,
   },
   {
     slug: 'exemplo-sobremesas',
@@ -148,7 +138,6 @@ export const pratos: Prato[] = [
     foto: fotoExemploSobremesas,
     alt: '[PREENCHER] Foto do prato de exemplo da categoria sobremesa',
     selos: [],
-    destaque: false,
   },
 ];
 
@@ -158,5 +147,3 @@ export function pratosPorCategoria() {
     .map((categoria) => ({ categoria, rotulo: CATEGORIAS[categoria], pratos: pratos.filter((p) => p.categoria === categoria) }))
     .filter((g) => g.pratos.length > 0);
 }
-
-export const destaques = () => pratos.filter((p) => p.destaque).slice(0, 6);

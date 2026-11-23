@@ -21,7 +21,6 @@ import Kanji from '@/components/ui/Kanji.astro';
         O boneco é redondo e pesado na base: empurre e ele volta a ficar de pé. Virou símbolo de persistência
         e de boa sorte para começos.
       </p>
-      <p class="historia__fecho">[PREENCHER] Por que a casa escolheu esse nome: a história em duas ou três frases.</p>
     </div>
   </div>
 </section>
@@ -76,13 +75,9 @@ import Kanji from '@/components/ui/Kanji.astro';
     display: grid;
     gap: 1.25rem;
   }
-  .historia__texto > p:not(.rotulo, .historia__fecho) {
+  .historia__texto > p:not(.rotulo) {
     max-width: 52ch;
     font-size: 1.0625rem;
     color: var(--color-washi-300);
-  }
-  .historia__fecho {
-    max-width: 52ch;
-    font-size: 1.0625rem;
   }
 </style>

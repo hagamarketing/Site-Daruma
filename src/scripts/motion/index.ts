@@ -12,13 +12,11 @@
 const MODULOS = {
   hero: () => import('./hero'),
   rodizio: () => import('./rodizio'),
-  contadores: () => import('./contadores'),
   cardapio: () => import('./cardapio'),
   revelar: () => import('./revelar'),
   reserva: () => import('./reserva'),
   galeria: () => import('./galeria'),
   historia: () => import('./historia'),
-  depoimentos: () => import('./depoimentos'),
 } as const;
 
 type NomeModulo = keyof typeof MODULOS;

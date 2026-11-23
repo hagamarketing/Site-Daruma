@@ -1,6 +1,6 @@
 /**
  * Dados gerais do Daruma Temaki e Rolls.
- * Tudo que aparece em mais de uma seção (endereço, telefones, links, nota do Google) mora aqui.
+ * Tudo que aparece em mais de uma seção (endereço, telefones, links) mora aqui.
  * Procure por "[PREENCHER]" para ver o que ainda precisa ser preenchido.
  */
 
@@ -32,9 +32,6 @@ export const site = {
     facebook: 'https://www.facebook.com/darumatemakierollsmarilia/',
   },
 
-  /** Nota e número de avaliações no Google (atualize de tempos em tempos). */
-  google: { nota: 4.3, avaliacoes: 700 },
-
   /** Faixa de preço para o Google (de $ a $$$$). */
   faixaPreco: '$$',
 
@@ -58,16 +55,10 @@ export const links = {
   waze: `https://waze.com/ul?ll=${geo.latitude},${geo.longitude}&navigate=yes`,
 };
 
-/** Nota com vírgula: 4.3 → "4,3" */
-export const notaGoogle = site.google.nota.toLocaleString('pt-BR', { minimumFractionDigits: 1 });
-/** 700 → "700+" */
-export const avaliacoesGoogle = `${site.google.avaliacoes.toLocaleString('pt-BR')}+`;
-
 /** Mensagens prontas do WhatsApp. */
 export const mensagens = {
   reserva: 'Olá! Quero reservar uma mesa no Daruma.\n\nData:\nHorário:\nPessoas:',
   delivery: 'Olá! Quero fazer um pedido de delivery.',
-  grupos: 'Olá! Quero reservar para um grupo ou aniversário.\n\nData:\nPessoas:\nOcasião:',
   almocoDomingo: 'Olá! Quero reservar para o almoço de domingo.\n\nData:\nHorário:\nPessoas:',
   geral: 'Olá! Vim pelo site do Daruma.',
 } as const;
