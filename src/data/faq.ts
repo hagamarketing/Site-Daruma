@@ -3,7 +3,6 @@
  * Respostas sobre horário, endereço e canais são montadas a partir de site.ts e horarios.ts.
  */
 import { horarios } from '@/data/horarios';
-import { modalidades } from '@/data/rodizio';
 import { site } from '@/data/site';
 import { agruparSemana, formatarTurno } from '@/scripts/horarios';
 
@@ -21,7 +20,6 @@ const resumoHorarios = agruparSemana(horarios.semana)
   .join('. ');
 
 const almoco = horarios.semana.domingo.find((t) => t.nome.toLowerCase().startsWith('almo'));
-const rodizio = modalidades[0];
 const e = site.endereco;
 
 export const faqIntro = {
@@ -47,7 +45,7 @@ export const faq: Pergunta[] = [
     pergunta: 'Em quais dias tem rodízio?',
     resposta: '[PREENCHER] Confirmar se o rodízio é servido em todos os dias e turnos de funcionamento.',
   },
-  { pergunta: 'Criança paga rodízio?', resposta: rodizio?.criancas || '[PREENCHER] Regra para crianças.' },
+  { pergunta: 'Criança paga rodízio?', resposta: '[PREENCHER] Regra de preço para crianças (idades e valores).' },
   {
     pergunta: 'Como faço uma reserva?',
     resposta: `Pelo formulário de reservas deste site, que já monta a mensagem, ou direto no WhatsApp ${site.whatsapp.exibicao}. Também atendemos pelo telefone ${site.telefone.exibicao}.`,

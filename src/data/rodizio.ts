@@ -1,78 +1,13 @@
 /**
- * Rodízio: modalidades (o que inclui, preços por dia e regras) e as etapas mostradas na home.
- * Valor null = preço ainda não definido (aparece como "R$ [PREENCHER]").
+ * Fotos do carrossel do rodízio na home (src/assets/fotos/rodizio/<etapa>/foto.jpg, 4:5).
+ * `nome` e `descricao` não aparecem mais no site; o `alt` descreve a foto para leitores de tela.
  */
 import type { ImageMetadata } from 'astro';
-import type { Dia } from '@/data/horarios';
 import fotoEntradas from '@/assets/fotos/rodizio/entradas/foto.jpg';
 import fotoFrios from '@/assets/fotos/rodizio/frios/foto.jpg';
 import fotoQuentes from '@/assets/fotos/rodizio/quentes/foto.jpg';
 import fotoTemakis from '@/assets/fotos/rodizio/temakis/foto.jpg';
 import fotoSobremesas from '@/assets/fotos/rodizio/sobremesas/foto.jpg';
-
-export interface PrecoRodizio {
-  dias: Dia[];
-  turno: 'jantar' | 'almoco';
-  /** Valor por pessoa, em reais. */
-  valor: number | null;
-}
-
-export interface Modalidade {
-  nome: string;
-  descricao: string;
-  inclui: string[];
-  precos: PrecoRodizio[];
-  criancas: string;
-  desperdicio: string;
-  observacoes: string[];
-}
-
-export const modalidades: Modalidade[] = [
-  {
-    nome: '[PREENCHER] Rodízio completo',
-    descricao: '[PREENCHER] Descreva a modalidade em duas frases: o que chega à mesa e como funciona.',
-    inclui: [
-      'Entradas',
-      'Peças frias (sushis, sashimis e rolls)',
-      'Pratos quentes',
-      'Temakis',
-      'Sobremesas',
-      '[PREENCHER] Confirmar itens incluídos'
-    ],
-    precos: [
-      {
-        dias: [
-          'segunda',
-          'terca',
-          'quinta'
-        ],
-        turno: 'jantar',
-        valor: null
-      },
-      {
-        dias: [
-          'sexta',
-          'sabado',
-          'domingo'
-        ],
-        turno: 'jantar',
-        valor: null
-      },
-      {
-        dias: [
-          'domingo'
-        ],
-        turno: 'almoco',
-        valor: null
-      }
-    ],
-    criancas: '[PREENCHER] Regra de preço para crianças (idades e valores).',
-    desperdicio: '[PREENCHER] Regra sobre sobras e desperdício.',
-    observacoes: [
-      '[PREENCHER] Bebidas e taxa de serviço cobradas à parte?'
-    ]
-  }
-];
 
 export interface Etapa {
   nome: string;

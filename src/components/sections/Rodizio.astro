@@ -2,7 +2,6 @@
 import Foto from '@/components/ui/Foto.astro';
 import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
 import Kanji from '@/components/ui/Kanji.astro';
-import RodizioPrecos from '@/components/sections/RodizioPrecos.astro';
 import { etapas } from '@/data/rodizio';
 
 const lista = etapas;
@@ -37,7 +36,6 @@ const total = String(lista.length).padStart(2, '0');
 
 </section>
 
-<RodizioPrecos />
 
 <style>
   .rodizio {
