@@ -60,21 +60,23 @@ Hoje faltam: **pratos reais** (os 9 atuais são exemplos, um por categoria), reg
 
 ## Fotos
 
-Hoje todas as fotos são **provisórias**: fundos escuros com o contorno do Daruma, nas proporções certas. Para trocar, substitua o arquivo **mantendo o nome** e atualize o texto alternativo (`alt`). O Astro gera AVIF/WebP em vários tamanhos sozinho; envie a foto original em JPEG de boa qualidade.
+O fundo do topo e o carrossel do rodízio já usam fotos reais. As demais (almoço de domingo, galeria, Instagram, compartilhamento) ainda são **provisórias**: fundos escuros com o contorno do Daruma. Para trocar, substitua o arquivo **mantendo o nome** e atualize o texto alternativo (`alt`). Aceita JPEG ou AVIF. O Astro gera AVIF/WebP em vários tamanhos sozinho; envie a foto original em JPEG de boa qualidade.
 
 | Onde | Arquivo | Proporção / mínimo |
 | --- | --- | --- |
-| Capa da home (imagem principal) | `src/assets/fotos/hero-chef.jpg` | 16:9, 1920 × 1080 |
+| Fundo do topo da home (imagem principal) | `src/assets/fotos/daruma-inicio.avif` | paisagem, 1920 px de largura |
+| Carrossel do rodízio | `src/assets/fotos/pratos/daruma-1.avif` a `daruma-5.avif` (lista em `src/data/rodizio.ts`) | qualquer proporção (o card recorta) |
 | Almoço de domingo | `src/assets/fotos/almoco-domingo.jpg` | 16:10, 1600 × 1000 |
 | Compartilhamento (WhatsApp, Facebook) | `src/assets/fotos/og-padrao.jpg` | 1200 × 630 |
-| Pratos | `src/assets/fotos/pratos/<slug>/foto.jpg` | 3:2, 1200 × 800 |
-| Carrossel do rodízio | `src/assets/fotos/rodizio/<etapa>/foto.jpg` | 4:5, 1200 × 1500 |
+| Pratos do cardápio (opcional) | `src/assets/fotos/pratos/` (importe em `src/data/cardapio.ts`) | 3:2, 1200 × 800 |
 | Galeria | `src/assets/fotos/galeria/<foto-n>/foto.jpg` | livre (a grade se ajusta) |
 | Grade do Instagram | `src/assets/fotos/instagram/<post-n>/foto.jpg` | 1:1, 800 × 800 |
 
-Para um prato novo: crie a pasta `src/assets/fotos/pratos/<slug>/` com o `foto.jpg`, importe no topo de `src/data/cardapio.ts` e adicione o prato na lista.
+**Carrossel do rodízio:** para trocar ou acrescentar fotos, coloque o arquivo em `src/assets/fotos/pratos/`, importe no topo de `src/data/rodizio.ts` e acrescente na lista `etapas` com o texto alternativo.
 
-**Capa da home:** é a imagem mais importante para a velocidade (LCP). Prefira fundo limpo e luz controlada; foto com muito ruído pesa mais. Depois do build, a maior versão AVIF (`dist/_astro/hero-chef.*.avif`) deve ficar abaixo de 120 KB.
+**Cardápio:** os pratos de exemplo estão sem foto. Para um prato com foto, coloque o arquivo em `src/assets/fotos/pratos/`, importe no topo de `src/data/cardapio.ts` e use `foto: nomeDaImportacao` no prato.
+
+**Fundo do topo:** é a imagem mais importante para a velocidade (LCP). Depois do build, a maior versão AVIF gerada (`dist/_astro/daruma-inicio.*.avif`, sem contar o arquivo original) deve ficar abaixo de 120 KB; hoje tem cerca de 92 KB.
 
 **Vídeo do hero (opcional):** exporte em MP4 sem áudio, até 1,5 MB, coloque em `public/video/hero.mp4` e troque `VIDEO_HERO` em `src/components/sections/Hero.astro` para `'/video/hero.mp4'`. Ele só carrega depois da foto da capa, nunca com economia de dados ou movimento reduzido, e tem botão de pausa.
 

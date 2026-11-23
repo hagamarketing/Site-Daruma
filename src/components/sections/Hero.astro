@@ -1,5 +1,5 @@
 ---
-import heroChef from '@/assets/fotos/hero-chef.jpg';
+import heroChef from '@/assets/fotos/daruma-inicio.avif';
 import Foto from '@/components/ui/Foto.astro';
 import HeroVideo from '@/components/ui/HeroVideo.astro';
 import StatusBadge from '@/components/ui/StatusBadge.astro';
@@ -22,7 +22,7 @@ const VIDEO_HERO: string | undefined = undefined;
   <div class="hero__midia" data-parallax="midia">
     <Foto
       src={heroChef}
-      alt="[PREENCHER] Chef do Daruma finalizando um temaki no balcão, sob luz baixa"
+      alt="Mesa do Daruma com sashimis de salmão maçaricado, rosa de salmão sobre pepino, sushis com crispy e outros pratos japoneses"
       sizes="100vw"
       larguras={[640, 960, 1280, 1600, 1920]}
       prioridade
@@ -79,9 +79,17 @@ const VIDEO_HERO: string | undefined = undefined;
   .hero__veu {
     position: absolute;
     inset: 0;
+    /* Escurece a foto atrás do texto (lado esquerdo e base) para manter a leitura sobre pratos claros. */
     background:
-      linear-gradient(to top, var(--color-sumi-950) 8%, oklch(16% 0.003 67.6 / 0.55) 55%, oklch(16% 0.003 67.6 / 0.2)),
-      linear-gradient(to right, oklch(16% 0.003 67.6 / 0.7), transparent 70%);
+      linear-gradient(to top, var(--color-sumi-950) 6%, oklch(16% 0.003 67.6 / 0.7) 50%, oklch(16% 0.003 67.6 / 0.3)),
+      linear-gradient(to right, oklch(16% 0.003 67.6 / 0.85), oklch(16% 0.003 67.6 / 0.4) 55%, transparent 80%);
+  }
+  @media (max-width: 40rem) {
+    .hero__veu {
+      background:
+        linear-gradient(to top, var(--color-sumi-950) 6%, oklch(16% 0.003 67.6 / 0.75) 55%, oklch(16% 0.003 67.6 / 0.45)),
+        oklch(16% 0.003 67.6 / 0.25);
+    }
   }
   .hero :global(.hero__kanji) {
     position: absolute;
