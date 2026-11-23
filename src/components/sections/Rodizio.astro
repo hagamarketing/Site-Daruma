@@ -1,7 +1,6 @@
 ---
 import Foto from '@/components/ui/Foto.astro';
 import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
-import Botao from '@/components/ui/Botao.astro';
 import Kanji from '@/components/ui/Kanji.astro';
 import RodizioPrecos from '@/components/sections/RodizioPrecos.astro';
 import { etapas } from '@/data/rodizio';
@@ -14,7 +13,7 @@ const total = String(lista.length).padStart(2, '0');
   <Kanji palavra="rodizio" vertical class="rodizio__kanji" />
   <div class="container-site rodizio__cabeca">
     <SecaoTitulo id="rodizio-titulo" rotulo="Rodízio japonês">
-      Cinco etapas, <em>no seu ritmo</em>
+      O Melhor Rodízio e o <em>Melhor Menu À La Carte.</em>
       <p slot="intro">Você pede, a cozinha prepara e a mesa vai se enchendo. Da entrada à sobremesa.</p>
     </SecaoTitulo>
     <p class="rodizio__contador" aria-hidden="true" data-contador>
@@ -22,18 +21,13 @@ const total = String(lista.length).padStart(2, '0');
     </p>
   </div>
 
-  <div class="rodizio__janela" data-rodizio-janela tabindex="0" role="region" aria-label="Etapas do rodízio (role para os lados)">
+  <div class="rodizio__janela" data-rodizio-janela tabindex="0" role="region" aria-label="Fotos do rodízio (role para os lados)">
     <ol role="list" class="rodizio__trilho" data-rodizio-trilho>
       {
-        lista.map((etapa, i) => (
+        lista.map((etapa) => (
           <li class="etapa" data-etapa>
             <div class="etapa__foto">
-              <Foto src={etapa.foto} alt={etapa.alt} sizes="(min-width: 64rem) 30vw, 80vw" larguras={[400, 640, 900]} />
-            </div>
-            <div class="etapa__texto">
-              <p class="etapa__numero" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
-              <h3 class="text-subtitulo">{etapa.nome}</h3>
-              <p>{etapa.descricao}</p>
+              <Foto src={etapa.foto} alt={etapa.alt} sizes="(min-width: 64rem) 32vw, 80vw" larguras={[400, 640, 900, 1200]} />
             </div>
           </li>
         ))
@@ -41,9 +35,6 @@ const total = String(lista.length).padStart(2, '0');
     </ol>
   </div>
 
-  <div class="container-site rodizio__rodape">
-    <Botao href="#precos" variante="secundario">Ver modalidades e preços</Botao>
-  </div>
 </section>
 
 <RodizioPrecos />
@@ -113,31 +104,17 @@ const total = String(lista.length).padStart(2, '0');
     height: 100%;
     object-fit: cover;
   }
-  .etapa__numero {
-    font-size: 0.8125rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    color: var(--color-gold-400);
-  }
-  .etapa__texto h3 {
-    margin-top: 0.25rem;
-  }
-  .etapa__texto p:last-child {
-    margin-top: 0.5rem;
-    color: var(--color-washi-300);
-  }
   /*
    * Modo fixo (JS, desktop/tablet): a seção ocupa exatamente a altura da tela e a rolagem vertical
-   * move o trilho. Título, cards e botão dividem a altura; a foto se ajusta ao espaço que sobra
+   * move o trilho. O título e as fotos dividem a altura; a foto se ajusta ao espaço que sobra
    * (unidades de contêiner), então os cards nunca ficam cortados em telas baixas (ex.: 1366×768).
    */
   .rodizio:global(.rodizio--fixo) {
-    --texto-etapa: 8.75rem;
-    --foto-etapa: min(calc(100cqh - var(--texto-etapa)), 32rem);
+    --foto-etapa: min(100cqh, 40rem);
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr);
     height: 100svh;
-    padding-block: 5.75rem 1.25rem;
+    padding-block: 5.75rem clamp(1.5rem, 5svh, 3rem);
   }
   .rodizio:global(.rodizio--fixo) .rodizio__cabeca :global(.secao-titulo) {
     gap: 0.5rem;
@@ -168,16 +145,6 @@ const total = String(lista.length).padStart(2, '0');
     height: var(--foto-etapa);
     aspect-ratio: auto;
   }
-  .rodizio:global(.rodizio--fixo) .etapa__texto p:last-child {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-  }
-  .rodizio:global(.rodizio--fixo) .rodizio__rodape {
-    margin-top: clamp(0.75rem, 2svh, 1.5rem);
-  }
   /* Telas muito baixas: esconde a introdução para sobrar espaço para os cards. */
   @media (max-height: 800px) {
     .rodizio:global(.rodizio--fixo) .rodizio__cabeca :global(.secao-titulo__intro) {
@@ -190,19 +157,15 @@ const total = String(lista.length).padStart(2, '0');
       overflow: visible;
     }
     .rodizio__trilho {
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
       width: auto;
     }
     .etapa {
-      grid-template-columns: minmax(8rem, 14rem) 1fr;
-      align-items: center;
       width: auto;
     }
     .rodizio__contador {
       display: none;
     }
-  }
-  .rodizio__rodape {
-    margin-top: 2.5rem;
   }
 </style>

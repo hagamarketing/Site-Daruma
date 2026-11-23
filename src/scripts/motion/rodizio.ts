@@ -1,6 +1,6 @@
 /**
  * Rodízio: seção fixa (pin) com rolagem horizontal pelas etapas (scrub) e contador de etapa.
- * O contador acompanha o progresso; a entrada do texto de cada etapa usa containerAnimation.
+ * O contador acompanha o progresso; a entrada de cada foto usa containerAnimation.
  * Movimento reduzido: o CSS transforma o trilho em lista vertical e nada é fixado.
  */
 import { CustomEase } from 'gsap/CustomEase';
@@ -63,18 +63,6 @@ export function iniciar(): void {
           trigger: etapa,
           containerAnimation: horizontal,
           start: 'left 98%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-      gsap.from(etapa.querySelector('.etapa__texto'), {
-        y: 30,
-        autoAlpha: 0,
-        duration: 0.6,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: etapa,
-          containerAnimation: horizontal,
-          start: 'left 85%',
           toggleActions: 'play none none reverse',
         },
       });
